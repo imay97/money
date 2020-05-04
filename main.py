@@ -31,8 +31,9 @@ class WebhookServer(object):
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    msg = int(open('page_' + str(message.chat.id)).read())
-    bot.delete_message(message_id = msg, chat_id = message.chat.id)
+    try:
+        msg = int(open('page_' + str(message.chat.id)).read())
+        bot.delete_message(message_id = msg, chat_id = message.chat.id)
     keyboard = types.InlineKeyboardMarkup(row_width = 2)
     btns = []
     btns.append(types.InlineKeyboardButton(text = '🤑 Заработать', callback_data = 'work'))
