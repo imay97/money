@@ -63,7 +63,7 @@ def callback_inline(call):
     if call.data == 'help':
         msg = bot.send_message(call.message.chat.id, "Помощь")
     with open('msg_id' + str(message.chat.id), 'w') as f:
-        f.write(str(msg.message_id))
+        f.write(str(msg.call.message_id))
 
 #end
 bot.remove_webhook()
