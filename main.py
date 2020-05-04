@@ -50,8 +50,8 @@ def start(message):
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     try:
-        msg = int(open('msg_id' + str(message.chat.id)).read())
-        bot.delete_message(message_id = msg, chat_id = message.chat.id)
+        msg = int(open('msg_id' + str(call.message.chat.id)).read())
+        bot.delete_message(message_id = msg, chat_id = call.message.chat.id)
     except:
         print("Сообщений не найдено")
     if call.data == 'work':
