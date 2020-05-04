@@ -42,7 +42,7 @@ def start(message):
     keyboard.add(*btns)
     msg = bot.send_message(message.chat.id, "Привет", reply_markup = keyboard)
     with open('msg_id' + str(message.chat.id), 'w') as f:
-		f.write(str(msg.message_id))
+        f.write(str(msg.message_id))
 
 #end
 bot.remove_webhook()
