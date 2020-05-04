@@ -7,8 +7,8 @@ API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
 WEBHOOK_HOST = '138.68.22.231'
 WEBHOOK_PORT = 80 #8443 80 88 443
 WEBHOOK_LISTEN = '0.0.0.0'
-WEBHOOK_SSL_CERT = '/home/tele/cert.pem'
-WEBHOOK_SSL_PRIV = '/home/tele/pkey.key'
+WEBHOOK_SSL_CERT = '/home/tele/cert/cert.pem'
+WEBHOOK_SSL_PRIV = '/home/tele/cert/pkey.key'
 WEBHOOK_URL_BASE = 'https://' + str(WEBHOOK_HOST) + ':' + str(WEBHOOK_PORT)
 WEBHOOK_URL_PATH = "/%s/" % (API_TOKEN)
 
