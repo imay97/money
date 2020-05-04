@@ -33,7 +33,7 @@ class WebhookServer(object):
 def start(message):
     keyboard = types.InlineKeyboardMarkup(row_width = 2)
     btns = []
-	btns.append(types.InlineKeyboardButton(text = 'Заработать', callback_data = 'work'))
+    btns.append(types.InlineKeyboardButton(text = 'Заработать', callback_data = 'work'))
     btns.append(types.InlineKeyboardButton(text = 'Партнеры', callback_data = 'partner'))
     btns.append(types.InlineKeyboardButton(text = 'Баланс', callback_data = 'money'))
     btns.append(types.InlineKeyboardButton(text = 'Помощь', callback_data = 'help'))
