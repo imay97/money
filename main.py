@@ -32,7 +32,7 @@ class WebhookServer(object):
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
     try:
-        msg = int(open('page_' + str(message.chat.id)).read())
+        msg = int(open('msg_id' + str(message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = message.chat.id)
     except:
         print("Сообщений не найдено")
