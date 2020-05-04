@@ -55,6 +55,24 @@ def start(message):
     with open('msg_id' + str(message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
+@bot.message_handler(content_types=['text'])
+def handler(message):
+    try:
+        msg = int(open('msg_id' + str(message.chat.id)).read())
+        bot.delete_message(message_id = msg, chat_id = message.chat.id)
+    except:
+        print("Сообщений не найдено")
+    if message.text == '🤑 Заработать':
+        keyboard = types.InlineKeyboardMarkup(row_width = 2)
+        btns = []
+        btns.append(types.InlineKeyboardButton('🗣 Пригласить друга, 200руб', callback_data = "say"))
+        btns.append(types.InlineKeyboardButton('📌 Подписаться на канал, 100руб', callback_data = "follow"))
+        btns.append(types.InlineKeyboardButton('👀 Посмотреть записи, 50руб', callback_data = "see"))
+        keyboard.add(*btns)
+        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = keyboard)
+        with open('msg_id' + str(message.chat.id), 'w') as f:
+            f.write(str(msg.message_id))
+
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     try:
@@ -62,14 +80,13 @@ def callback_inline(call):
         bot.delete_message(message_id = msg, chat_id = call.message.chat.id)
     except:
         print("Сообщений не найдено")
-    if call.data == 'work':
-        msg = bot.send_message(call.message.chat.id, "Заработать")
-    if call.data == 'partner':
-        msg = bot.send_message(call.message.chat.id, "Партнеры")
-    if call.data == 'money':
-        msg = bot.send_message(call.message.chat.id, "Баланс")
-    if call.data == 'help':
-        msg = bot.send_message(call.message.chat.id, "Помощь")
+    if call.data == 'say':
+        msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
+        деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера")
+    if call.data == 'follow':
+        msg = bot.send_message(call.message.chat.id, "Подписался")
+    if call.data == 'see':
+        msg = bot.send_message(call.message.chat.id, "Просмотрел")
     with open('msg_id' + str(call.message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
