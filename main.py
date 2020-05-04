@@ -1,5 +1,7 @@
 import telebot
 import cherrypy
+import sqlite3
+from telebot import types
 
 API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
 WEBHOOK_HOST = '138.68.22.231'
@@ -29,7 +31,14 @@ class WebhookServer(object):
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    bot.send_message(message.chat.id, "Привет")
+    keyboard = types.InlineKeyboardMarkup(row_width = 2)
+	btns = []
+	btns.append(types.InlineKeyboardButton(text = '👍 Заработать', callback_data = 'work'))
+    btns.append(types.InlineKeyboardButton(text = 'Партнеры', callback_data = 'partner'))
+    btns.append(types.InlineKeyboardButton(text = 'Баланс', callback_data = 'money'))
+    btns.append(types.InlineKeyboardButton(text = 'Помощь', callback_data = 'help'))
+    keyboard.add(*btns)
+    bot.send_message(message.chat.id, "Привет", reply_markup = keyboard)
 
 #end
 bot.remove_webhook()
