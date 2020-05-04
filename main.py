@@ -47,6 +47,24 @@ def start(message):
     with open('msg_id' + str(message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
+@bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
+def callback_inline(call):
+    try:
+        msg = int(open('msg_id' + str(message.chat.id)).read())
+        bot.delete_message(message_id = msg, chat_id = message.chat.id)
+    except:
+        print("Сообщений не найдено")
+    if call.data == 'work':
+        msg = bot.send_message(call.message.chat.id, "Заработать")
+    if call.data == 'partner':
+        msg = bot.send_message(call.message.chat.id, "Партнеры")
+    if call.data == 'money':
+        msg = bot.send_message(call.message.chat.id, "Баланс")
+    if call.data == 'help':
+        msg = bot.send_message(call.message.chat.id, "Помощь")
+    with open('msg_id' + str(message.chat.id), 'w') as f:
+        f.write(str(msg.message_id))
+
 #end
 bot.remove_webhook()
 bot.set_webhook(url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH, certificate = open(WEBHOOK_SSL_CERT, 'r'))
