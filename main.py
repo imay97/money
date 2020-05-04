@@ -63,7 +63,7 @@ def handler(message):
     except:
         print("Сообщений не найдено")
     if message.text == '🤑 Заработать':
-        keyboard = types.InlineKeyboardMarkup(row_width = 2)
+        keyboard = types.InlineKeyboardMarkup(row_width = 1)
         btns = []
         btns.append(types.InlineKeyboardButton('🗣 Пригласить друга, 200руб', callback_data = "say"))
         btns.append(types.InlineKeyboardButton('📌 Подписаться на канал, 100руб', callback_data = "follow"))
@@ -75,6 +75,13 @@ def handler(message):
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
+    keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
+    btns = []
+    btns.append(types.KeyboardButton('🤑 Заработать'))
+    btns.append(types.KeyboardButton('👥 Партнеры'))
+    btns.append(types.KeyboardButton('💰 Баланс'))
+    btns.append(types.KeyboardButton('❔ Помощь'))
+    keyboard.add(*btns)
     try:
         msg = int(open('msg_id' + str(call.message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = call.message.chat.id)
@@ -82,7 +89,7 @@ def callback_inline(call):
         print("Сообщений не найдено")
     if call.data == 'say':
         msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
-        деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера")
+        деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = keyboard)
     if call.data == 'follow':
         msg = bot.send_message(call.message.chat.id, "Подписался")
     if call.data == 'see':
