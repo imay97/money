@@ -2,6 +2,7 @@ import telebot
 import cherrypy
 import sqlite3
 from telebot import types
+import os
 
 API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
 WEBHOOK_HOST = '138.68.22.231'
