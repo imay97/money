@@ -31,14 +31,19 @@ class WebhookServer(object):
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
+    with open('msg_id' + str(message.chat.id), 'w') as f:
+		msg = f.read()
+    bot.delete_message(message_id = msg, chat_id = message.chat.id)
     keyboard = types.InlineKeyboardMarkup(row_width = 2)
     btns = []
     btns.append(types.InlineKeyboardButton(text = '🤑 Заработать', callback_data = 'work'))
-    btns.append(types.InlineKeyboardButton(text = 'Партнеры', callback_data = 'partner'))
-    btns.append(types.InlineKeyboardButton(text = 'Баланс', callback_data = 'money'))
-    btns.append(types.InlineKeyboardButton(text = 'Помощь', callback_data = 'help'))
+    btns.append(types.InlineKeyboardButton(text = '👥 Партнеры', callback_data = 'partner'))
+    btns.append(types.InlineKeyboardButton(text = '💰 Баланс', callback_data = 'money'))
+    btns.append(types.InlineKeyboardButton(text = '❔ Помощь', callback_data = 'help'))
     keyboard.add(*btns)
-    bot.send_message(message.chat.id, "Привет", reply_markup = keyboard)
+    msg = bot.send_message(message.chat.id, "Привет", reply_markup = keyboard)
+    with open('msg_id' + str(message.chat.id), 'w') as f:
+		f.write(str(msg.message_id))
 
 #end
 bot.remove_webhook()
