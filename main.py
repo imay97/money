@@ -75,7 +75,7 @@ def handler(message):
     except:
         print("Сообщений не найдено")
     if message.text == '🤑 Заработать':
-        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = key_money() + key_main())
+        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = key_money(), reply_markup = key_main())
         with open('msg_id' + str(message.chat.id), 'w') as f:
             f.write(str(msg.message_id))
 
