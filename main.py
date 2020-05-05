@@ -1,6 +1,6 @@
 import telebot
 import cherrypy
-import sqlite3
+import psycopg2
 from telebot import types
 
 API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
@@ -28,6 +28,10 @@ class WebhookServer(object):
         else:
             raise cherrypy.HTTPError(403)
 #begin
+
+conn = psycopg2.connect(dbname='test', user='postgres',
+                    password='7fZU9C6z', host='localhost')
+cursor = conn.cursor()
 
 def key_main():
     keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
@@ -75,7 +79,7 @@ def handler(message):
     except:
         print("Сообщений не найдено")
     if message.text == '🤑 Заработать':
-        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = key_money(), reply_markup = key_main())
+        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = key_money())
         with open('msg_id' + str(message.chat.id), 'w') as f:
             f.write(str(msg.message_id))
 
@@ -90,14 +94,15 @@ def callback_inline(call):
         msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
         деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = keyboard)
     if call.data == 'follow':
-        follow()
+        follow(call.message.chat.id)
     if call.data == 'see':
         msg = bot.send_message(call.message.chat.id, "Вы просмотрели всю рекламу", reply_markup = key_main())
     with open('msg_id' + str(call.message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
 def follow(id):
-    msg = bot.send_message(call.message.chat.id, "Вы подписаны на все каналы", reply_markup = key_main())
+    cursor.execute("select three from test where one = 1")
+    msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
 #end
 bot.remove_webhook()
