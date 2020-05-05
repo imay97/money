@@ -86,7 +86,7 @@ def callback_inline(call):
         msg = int(open('msg_id' + str(call.message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = call.message.chat.id)
     except:
-        print("Сообщений не найдено")
+        print("Сообщений не найдено ")
     if call.data == 'say':
         msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
         деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = keyboard)
