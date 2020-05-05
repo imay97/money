@@ -91,9 +91,9 @@ def callback_inline(call):
         msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
         деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = keyboard)
     if call.data == 'follow':
-        msg = bot.send_message(call.message.chat.id, "Подписался")
+        msg = bot.send_message(call.message.chat.id, "Подписался", reply_markup = keyboard)
     if call.data == 'see':
-        msg = bot.send_message(call.message.chat.id, "Просмотрел")
+        msg = bot.send_message(call.message.chat.id, "Просмотрел", reply_markup = keyboard)
     with open('msg_id' + str(call.message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
