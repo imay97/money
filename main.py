@@ -30,13 +30,14 @@ class WebhookServer(object):
 #begin
 
 def key_main():
-    keyboard_reply = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
+    keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
     btns = []
     btns.append(types.KeyboardButton('🤑 Заработать'))
     btns.append(types.KeyboardButton('👥 Партнеры'))
     btns.append(types.KeyboardButton('💰 Баланс'))
     btns.append(types.KeyboardButton('❔ Помощь'))
-    return keyboard_reply.add(*btns)
+    keyboard.add(*btns)
+    return keyboard
 
 def key_money():
     keyboard = types.InlineKeyboardMarkup(row_width = 1)
@@ -44,7 +45,8 @@ def key_money():
     btns.append(types.InlineKeyboardButton('🗣 Пригласить друга, 200руб', callback_data = "say"))
     btns.append(types.InlineKeyboardButton('📌 Подписаться на канал, 100руб', callback_data = "follow"))
     btns.append(types.InlineKeyboardButton('👀 Посмотреть записи, 50руб', callback_data = "see"))
-    return keyboard.add(*btns)
+    keyboard.add(*btns)
+    return keyboard
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
