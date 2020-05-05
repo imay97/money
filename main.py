@@ -101,7 +101,7 @@ def callback_inline(call):
         f.write(str(msg.message_id))
 
 def follow(id):
-    cursor.execute("select three from test where one = 1")
+    cursor.execute("select 'three' from 'test' where 'one' = 1")
     msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
 #end
