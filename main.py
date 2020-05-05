@@ -104,6 +104,8 @@ def follow(id):
     cursor.execute('SELECT * FROM test')
     msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
+cursor.close()
+conn.close()
 #end
 bot.remove_webhook()
 bot.set_webhook(url = WEBHOOK_URL_BASE + WEBHOOK_URL_PATH, certificate = open(WEBHOOK_SSL_CERT, 'r'))
