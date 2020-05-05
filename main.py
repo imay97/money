@@ -29,6 +29,23 @@ class WebhookServer(object):
             raise cherrypy.HTTPError(403)
 #begin
 
+def key_main():
+    keyboard_reply = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
+    btns = []
+    btns.append(types.KeyboardButton('🤑 Заработать'))
+    btns.append(types.KeyboardButton('👥 Партнеры'))
+    btns.append(types.KeyboardButton('💰 Баланс'))
+    btns.append(types.KeyboardButton('❔ Помощь'))
+    return keyboard_reply.add(*btns)
+
+def key_money():
+    keyboard = types.InlineKeyboardMarkup(row_width = 1)
+    btns = []
+    btns.append(types.InlineKeyboardButton('🗣 Пригласить друга, 200руб', callback_data = "say"))
+    btns.append(types.InlineKeyboardButton('📌 Подписаться на канал, 100руб', callback_data = "follow"))
+    btns.append(types.InlineKeyboardButton('👀 Посмотреть записи, 50руб', callback_data = "see"))
+    return keyboard.add(*btns)
+
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
     try:
@@ -36,13 +53,6 @@ def start(message):
         bot.delete_message(message_id = msg, chat_id = message.chat.id)
     except:
         print("Сообщений не найдено")
-    keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
-    btns = []
-    btns.append(types.KeyboardButton('🤑 Заработать'))
-    btns.append(types.KeyboardButton('👥 Партнеры'))
-    btns.append(types.KeyboardButton('💰 Баланс'))
-    btns.append(types.KeyboardButton('❔ Помощь'))
-    keyboard.add(*btns)
     msg = bot.send_message(message.chat.id, "Приветствую тебя.\
     Надоело выполнять ебанутые\
     приказы командиров (начальников)?\
@@ -51,7 +61,7 @@ def start(message):
     Не хочешь брать кредит на машину?\
     Тогда тебе к нам. С нами ты получишь стабильный заработок,\
     сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
-    Жми \"Заработать\" и делай свои первые деньги.", reply_markup = keyboard)
+    Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
     with open('msg_id' + str(message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
@@ -63,25 +73,12 @@ def handler(message):
     except:
         print("Сообщений не найдено")
     if message.text == '🤑 Заработать':
-        keyboard = types.InlineKeyboardMarkup(row_width = 1)
-        btns = []
-        btns.append(types.InlineKeyboardButton('🗣 Пригласить друга, 200руб', callback_data = "say"))
-        btns.append(types.InlineKeyboardButton('📌 Подписаться на канал, 100руб', callback_data = "follow"))
-        btns.append(types.InlineKeyboardButton('👀 Посмотреть записи, 50руб', callback_data = "see"))
-        keyboard.add(*btns)
-        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = keyboard)
+        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = key_money())
         with open('msg_id' + str(message.chat.id), 'w') as f:
             f.write(str(msg.message_id))
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
-    keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
-    btns = []
-    btns.append(types.KeyboardButton('🤑 Заработать'))
-    btns.append(types.KeyboardButton('👥 Партнеры'))
-    btns.append(types.KeyboardButton('💰 Баланс'))
-    btns.append(types.KeyboardButton('❔ Помощь'))
-    keyboard.add(*btns)
     try:
         msg = int(open('msg_id' + str(call.message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = call.message.chat.id)
@@ -91,11 +88,14 @@ def callback_inline(call):
         msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
         деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = keyboard)
     if call.data == 'follow':
-        msg = bot.send_message(call.message.chat.id, "Вы подписаны на все каналы", reply_markup = keyboard)
+
     if call.data == 'see':
-        msg = bot.send_message(call.message.chat.id, "Вы просмотрели всю рекламу", reply_markup = keyboard)
+        msg = bot.send_message(call.message.chat.id, "Вы просмотрели всю рекламу", reply_markup = key_main())
     with open('msg_id' + str(call.message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
+
+def follow(id):
+    msg = bot.send_message(call.message.chat.id, "Вы подписаны на все каналы", reply_markup = key_main())
 
 #end
 bot.remove_webhook()
