@@ -30,7 +30,7 @@ class WebhookServer(object):
 #begin
 
 conn = psycopg2.connect(dbname='monDB', user='postgres',
-                    password='7fZU9C6z', host='localhost')
+                    password='7fZU9C6z', host='127.0.0.1')
 cursor = conn.cursor()
 
 def key_main():
