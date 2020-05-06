@@ -92,7 +92,7 @@ def callback_inline(call):
         print("Сообщений не найдено ")
     if call.data == 'say':
         msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
-        деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = keyboard)
+        деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = key_main())
     if call.data == 'follow':
         follow(call.message.chat.id)
     if call.data == 'see':
