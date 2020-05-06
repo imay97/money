@@ -29,8 +29,8 @@ class WebhookServer(object):
             raise cherrypy.HTTPError(403)
 #begin
 
-conn = psycopg2.connect(dbname='monDB', user='postgres',
-                    password='7fZU9C6z', host='127.0.0.1')
+conn = psycopg2.connect(dbname='mainDB', user='admin',
+                    password='7fZU9C6z', host='localhost')
 cursor = conn.cursor()
 
 def key_main():
