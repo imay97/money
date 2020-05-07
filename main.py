@@ -100,7 +100,7 @@ def follow(id):
     conn = psycopg2.connect(dbname='mainDB', user='imay',
                         password='mayweather97', host='localhost', port = '5432')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM "imay"')
+    cursor.execute('SELECT * FROM "monDB.imay"')
     msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
 #end
