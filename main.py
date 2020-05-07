@@ -29,10 +29,6 @@ class WebhookServer(object):
             raise cherrypy.HTTPError(403)
 #begin
 
-conn = psycopg2.connect(dbname='mainDB', user='imay',
-                    password='mayweather97', host='localhost', port = '5432')
-cursor = conn.cursor()
-
 def key_main():
     keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
     btns = []
@@ -101,7 +97,10 @@ def callback_inline(call):
         f.write(str(msg.message_id))
 
 def follow(id):
-    cursor.execute('SELECT * FROM "imay";')
+    conn = psycopg2.connect(dbname='mainDB', user='imay',
+                        password='mayweather97', host='localhost', port = '5432')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM "imay"')
     msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
 #end
