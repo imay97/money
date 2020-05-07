@@ -101,7 +101,7 @@ def callback_inline(call):
         f.write(str(msg.message_id))
 
 def follow(id):
-    cursor.execute('SELECT * FROM "imay"')
+    cursor.execute('SELECT * FROM "imay";')
     msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
 #end
