@@ -55,8 +55,9 @@ def key_money():
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
     with conn.cursor() as cur:
-        cur.execute("SELECT id FROM users")
+        cur.execute("SELECT id, msg FROM users")
         if cur.fetchone()[0] == message.chat.id:
+            print(cur.fetchone()[1])
             msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
             cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
             conn.commit()
