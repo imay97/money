@@ -56,25 +56,24 @@ def key_money():
 def start(message):
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM users")
-        print(cur.fetchone())
-        cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
-        conn.commit()
-    try:
-        msg = int(open('msg_id' + str(message.chat.id)).read())
-        bot.delete_message(message_id = msg, chat_id = message.chat.id)
-    except:
-        print("Сообщений не найдено")
-    msg = bot.send_message(message.chat.id, "Приветствую тебя.\
-    Надоело выполнять ебанутые\
-    приказы командиров (начальников)?\
-    Заебали самолёты?\
-    Живешь от зарплаты до зарплаты?\
-    Не хочешь брать кредит на машину?\
-    Тогда тебе к нам. С нами ты получишь стабильный заработок,\
-    сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
-    Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
-    with open('msg_id' + str(message.chat.id), 'w') as f:
-        f.write(str(msg.message_id))
+        if cur.fetchone()[] == message.chat.id:
+            msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
+            cur.execute('INSERT INTO users (msg) VALUES (%s)', msg.message_id)
+            conn.commit()
+        else:
+            cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
+            conn.commit()
+            msg = bot.send_message(message.chat.id, "Приветствую тебя.\
+            Надоело выполнять ебанутые\
+            приказы командиров (начальников)?\
+            Заебали самолёты?\
+            Живешь от зарплаты до зарплаты?\
+            Не хочешь брать кредит на машину?\
+            Тогда тебе к нам. С нами ты получишь стабильный заработок,\
+            сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
+            Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
+            cur.execute('INSERT INTO users (msg) VALUES (%s)', msg.message_id)
+            conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
