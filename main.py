@@ -56,7 +56,7 @@ def key_money():
 def start(message):
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM users")
-        if cur.fetchone()[] == message.chat.id:
+        if cur.fetchone()[0] == message.chat.id:
             msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
             cur.execute('INSERT INTO users (msg) VALUES (%s)', msg.message_id)
             conn.commit()
