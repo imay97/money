@@ -68,13 +68,13 @@ def start(message):
                 conn.commit()
         except:
             msg = bot.send_message(message.chat.id, '''Приветствую тебя.
-            Надоело выполнять ебанутые
-            приказы командиров (начальников)?
-            Заебали самолёты?
-            Живешь от зарплаты до зарплаты?
-            Не хочешь брать кредит на машину?
-            Тогда тебе к нам. С нами ты получишь стабильный заработок,
-            сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.
+            Надоело выполнять ебанутые\
+            приказы командиров (начальников)?\
+            Заебали самолёты?\
+            Живешь от зарплаты до зарплаты?\
+            Не хочешь брать кредит на машину?\
+            Тогда тебе к нам. С нами ты получишь стабильный заработок,\
+            сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
             Жми \"Заработать\" и делай свои первые деньги.''', reply_markup = key_main())
             hash = hashlib.md5(str(id).encode())
             cur.execute("INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)",
@@ -85,7 +85,6 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def handler(message):
     with conn.cursor() as cur:
-        try:
             id = int(message.chat.id)
             cur.execute('SELECT msg FROM users WHERE id = %s', [id])
             msg = cur.fetchone()[0]
@@ -94,33 +93,30 @@ def handler(message):
                 if(message.text == '🤑 Заработать'):
                     msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
                 if(message.text == '👥 Партнеры'):
-                    msg = bot.send_message(id, "Партнёры:" + partners(id), reply_markup = key_main())
+                    msg = bot.send_message(id, '''Приглашайте партнёров в бот и \
+                    получайте за них деньги!\
+                    \
+                    Отправьте другу ссылку в телеграме:\
+                    ''' + partners(id, 1) + '''\
+                    \
+                    300 руб. за каждого приглашенного Вами партнера\
+                    Приглашённых пользователей: ''' + partners(id, 2), reply_markup = key_main())
                 cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(id)))
                 conn.commit()
-        except:
-            msg = bot.send_message(message.chat.id,  "Выберите способ заработка", reply_markup = key_money())
-            cur.execute("INSERT INTO users (id, name, date, msg) VALUES (%s, %s, %s, %s)",
-            (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name),
-            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id)))
-            conn.commit()
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
-    try:
-        msg = int(open('msg_id' + str(call.message.chat.id)).read())
-        bot.delete_message(message_id = msg, chat_id = call.message.chat.id)
-    except:
-        print("Сообщений не найдено ")
-    if call.data == 'say':
-        msg = bot.send_message(call.message.chat.id, "Приглашайте партнёров в бот и получайте за них \
-        деньги!\n https://t.me/imaycash_bot \n 200руб за каждого приглашенного Вами партнера", reply_markup = key_main())
-    if call.data == 'follow':
-        follow(call.message.chat.id)
-    if call.data == 'see':
-        msg = bot.send_message(call.message.chat.id, "Вы просмотрели всю рекламу", reply_markup = key_main())
-    with open('msg_id' + str(call.message.chat.id), 'w') as f:
-        f.write(str(msg.message_id))
+    print("callback")
 
+def partners(id, func):
+    with conn.cursor() as cur:
+        if(func == 1):
+            cur.execute('SELECT ref FROM users WHERE id = %s', [id])
+            return 'https:/t.me/imaycash_bot?start=' + cur.fetchone()[0]
+        if(func == 2):
+            cur.execute('SELECT COUNT(id_me) FROM partners WHERE id_me = %s', [id])
+            n = cur.fetchne()[0]
+            return n + '''/nЗаработок: ''' + (200 * int(n))
 
 #end
 bot.remove_webhook()
