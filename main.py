@@ -32,7 +32,6 @@ class WebhookServer(object):
 
 conn = psycopg2.connect(dbname='adm', user='adm',
                     password='adm', host='127.0.0.1')
-cursor = conn.cursor()
 
 def key_main():
     keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
@@ -55,8 +54,11 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    cursor.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
-    conn.commit()
+    with conn.sursor() as cur:
+        cursor.execute("SELECT id FROM users")
+        print(cursor.fetchone())
+        cursor.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
+        conn.commit()
     try:
         msg = int(open('msg_id' + str(message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = message.chat.id)
