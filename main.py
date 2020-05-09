@@ -2,6 +2,7 @@ import telebot
 import cherrypy
 import psycopg2
 from telebot import types
+import datetime
 
 API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
 WEBHOOK_HOST = '138.68.22.231'
@@ -54,6 +55,10 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
+    cursor.execute('INSERT INTO users (id, start, name, date) VALUES (%s)', \
+    (int(message.chat.id), 1, \
+    str(massage.chat.last_name + ' ' + message.chat.first_name), \
+    datetime.datetime.today().strftime("%Y-%m-%d-%H.%M.%S")))
     try:
         msg = int(open('msg_id' + str(message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = message.chat.id)
