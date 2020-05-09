@@ -59,7 +59,7 @@ def start(message):
     with conn.cursor() as cur:
         try:
             id = message.chat.id
-            cur.execute('SELECT msg FROM users WHERE id = %s', (id))
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             msg = cur.fetchone()[0]
             print(msg)
             if msg != None:
