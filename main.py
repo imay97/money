@@ -119,12 +119,6 @@ def callback_inline(call):
     with open('msg_id' + str(call.message.chat.id), 'w') as f:
         f.write(str(msg.message_id))
 
-def follow(id):
-
-
-def partners(id):
-
-
 
 #end
 bot.remove_webhook()
