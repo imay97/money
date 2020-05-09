@@ -102,13 +102,16 @@ def callback_inline(call):
 
 def partners(id, func):
     with conn.cursor() as cur:
-        if(func == 1):
-            cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
-            return 'https:/t.me/imaycash_bot?start=' + cur.fetchone()[0]
-        if(func == 2):
-            cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
-            n = cur.fetchone()[0]
-            return str(n) + '/nЗаработок: ' + str(200 * int(n))
+        try:
+            if(func == 1):
+                cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
+                return 'https:/t.me/imaycash_bot?start=' + cur.fetchone()[0]
+            if(func == 2):
+                cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
+                n = cur.fetchone()[0]
+                return str(n) + '/nЗаработок: ' + str(200 * int(n))
+        except:
+            return 'None'
 
 #end
 bot.remove_webhook()
