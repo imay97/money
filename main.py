@@ -58,7 +58,7 @@ def start(message):
         cur.execute("SELECT id FROM users")
         if cur.fetchone()[0] == message.chat.id:
             msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
-            cur.execute('INSERT INTO users (msg) VALUES (%s) WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
+            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
             conn.commit()
         else:
             cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
@@ -72,7 +72,7 @@ def start(message):
             Тогда тебе к нам. С нами ты получишь стабильный заработок,\
             сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
             Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
-            cur.execute('INSERT INTO users (msg) VALUES (%s)', msg.message_id)
+            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
