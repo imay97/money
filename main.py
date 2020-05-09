@@ -101,7 +101,7 @@ def follow(id):
                         password='adm', host='127.0.0.1')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM test')
-    msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
+    msg = bot.send_message(id, cursor.fetchone(), reply_markup = key_main())
 
 #end
 bot.remove_webhook()
