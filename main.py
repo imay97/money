@@ -112,7 +112,7 @@ def partners(id, func):
             cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
             return 'https:/t.me/imaycash_bot?start=' + cur.fetchone()[0]
         if(func == 2):
-            cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id))
+            cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
             n = cur.fetchone()[0]
             return n + '''/nЗаработок: ''' + (200 * int(n))
 
