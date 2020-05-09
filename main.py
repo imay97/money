@@ -78,7 +78,7 @@ def start(message):
             Жми \"Заработать\" и делай свои первые деньги.''', reply_markup = key_main())
             cur.execute("INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)",
             (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name),
-            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id), str(hashlib.md5(str(id).encode()).hexdigest())))
+            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id), str(hashlib.md5(str(id).encode()))))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
