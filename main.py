@@ -55,7 +55,7 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    print(message.text)
+    print(message.text[7:])
     with conn.cursor() as cur:
         try:
             id = message.chat.id
