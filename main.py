@@ -54,10 +54,10 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    with conn.sursor() as cur:
-        cursor.execute("SELECT id FROM users")
-        print(cursor.fetchone())
-        cursor.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
+    with conn.cursor() as cur:
+        cur.execute("SELECT id FROM users")
+        print(cur.fetchone())
+        cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
         conn.commit()
     try:
         msg = int(open('msg_id' + str(message.chat.id)).read())
