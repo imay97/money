@@ -57,7 +57,7 @@ def start(message):
     with conn.cursor() as cur:
         try:
             id = message.chat.id
-            cur.execute("SELECT msg FROM users WHERE id = %s", int(id))
+            cur.execute("SELECT msg FROM users WHERE id = %s", id)
             msg = cur.fetchone()[0]
             if id == message.chat.id and msg != None:
                 bot.delete_message(message_id = msg, chat_id = id)
