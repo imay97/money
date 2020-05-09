@@ -100,8 +100,9 @@ def follow(id):
     conn = psycopg2.connect(dbname='adm', user='adm',
                         password='adm', host='127.0.0.1')
     cursor = conn.cursor()
-    cursor.execute('SELECT one FROM test')
+    cursor.execute('SELECT two FROM test')
     msg = bot.send_message(id, cursor.fetchone(), reply_markup = key_main())
+    print msg
 
 #end
 bot.remove_webhook()
