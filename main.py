@@ -57,7 +57,7 @@ def key_money():
 def start(message):
     print(message.text[7:])
     with conn.cursor() as cur:
-        try:
+        #try:
             id = message.chat.id
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             msg = cur.fetchone()[0]
@@ -66,7 +66,8 @@ def start(message):
                 msg = bot.send_message(id, "Меню", reply_markup = key_main())
                 cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 conn.commit()
-        except:
+            else:
+        #except:
             msg = bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
             hash = hashlib.md5(str(id).encode())
             name = message.chat.last_name + ' ' + message.chat.first_name
