@@ -100,7 +100,7 @@ def follow(id):
     conn = psycopg2.connect(dbname='adm', user='adm',
                         password='adm', host='127.0.0.1')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM test')
+    cursor.execute('SELECT one FROM test')
     msg = bot.send_message(id, cursor.fetchone(), reply_markup = key_main())
 
 #end
