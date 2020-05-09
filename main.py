@@ -61,7 +61,7 @@ def start(message):
             id = int(message.chat.id)
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             msg = cur.fetchone()[0]
-            if id == message.chat.id and msg != None:
+            if msg != None:
                 bot.delete_message(message_id = msg, chat_id = id)
                 msg = bot.send_message(id, "Меню", reply_markup = key_main())
                 cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(id)))
