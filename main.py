@@ -57,7 +57,7 @@ def key_money():
 def start(message):
     cursor.execute('INSERT INTO users (id, start, name, date) VALUES (%s)', \
     (int(message.chat.id), 1, \
-    str(massage.chat.last_name + ' ' + message.chat.first_name), \
+    str(message.chat.last_name + ' ' + message.chat.first_name), \
     datetime.datetime.today().strftime("%Y-%m-%d-%H.%M.%S")))
     try:
         msg = int(open('msg_id' + str(message.chat.id)).read())
