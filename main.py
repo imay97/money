@@ -97,10 +97,10 @@ def callback_inline(call):
         f.write(str(msg.message_id))
 
 def follow(id):
-    conn = psycopg2.connect(dbname='mainDB', user='imay',
-                        password='mayweather97', host='localhost', port = '5432')
+    conn = psycopg2.connect(dbname='mainDB', user='postgres',
+                        password='', host='127.0.0.1', port = '5432')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM "monDB.imay"')
+    cursor.execute('SELECT * FROM test')
     msg = bot.send_message(call.message.chat.id, cursor.fetchone(), reply_markup = key_main())
 
 #end
