@@ -55,7 +55,7 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    cursor.execute('INSERT INTO users (id, start, name, date) VALUES (%, %, %, %)', \
+    cursor.execute('INSERT INTO users (id, start, name, date) VALUES (%i, %i, %s, %s)', \
     (int(message.chat.id), 1, \
     str(message.chat.last_name + ' ' + message.chat.first_name), \
     datetime.datetime.today().strftime("%Y-%m-%d-%H.%M.%S")))
