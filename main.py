@@ -66,12 +66,12 @@ def start(message):
                 cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 conn.commit()
             else:
-            msg = bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
-            hash = hashlib.md5(str(id).encode())
-            name = message.chat.last_name + ' ' + message.chat.first_name
-            date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
-            cur.execute('INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)', (id, name, date, msg.message_id, str(hash.hexdigest())))
-            conn.commit()
+                msg = bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
+                hash = hashlib.md5(str(id).encode())
+                name = message.chat.last_name + ' ' + message.chat.first_name
+                date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
+                cur.execute('INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)', (id, name, date, msg.message_id, str(hash.hexdigest())))
+                conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
