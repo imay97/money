@@ -54,6 +54,7 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
+    print(message.text)
     with conn.cursor() as cur:
         try:
             id = int(message.chat.id)
@@ -81,15 +82,25 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
-    try:
-        msg = int(open('msg_id' + str(message.chat.id)).read())
-        bot.delete_message(message_id = msg, chat_id = message.chat.id)
-    except:
-        print("Сообщений не найдено")
-    if message.text == '🤑 Заработать':
-        msg = bot.send_message(message.chat.id, "Выберите способ заработка", reply_markup = key_money())
-        with open('msg_id' + str(message.chat.id), 'w') as f:
-            f.write(str(msg.message_id))
+    with conn.cursor() as cur:
+        try:
+            id = int(message.chat.id)
+            cur.execute('SELECT msg FROM users WHERE id = %s', [id])
+            msg = cur.fetchone()[0]
+            if id == message.chat.id and msg != None:
+                bot.delete_message(message_id = msg, chat_id = id)
+                if(message.text == '🤑 Заработать'):
+                    msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
+                if(message.text == '👥 Партнеры'):
+                    msg = bot.send_message(id, "Партнёры:" + partners(id), reply_markup = key_main())
+                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(id)))
+                conn.commit()
+        except:
+            msg = bot.send_message(message.chat.id,  "Выберите способ заработка", reply_markup = key_money())
+            cur.execute("INSERT INTO users (id, name, date, msg) VALUES (%s, %s, %s, %s)",
+            (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name),
+            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id)))
+            conn.commit()
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
@@ -109,8 +120,10 @@ def callback_inline(call):
         f.write(str(msg.message_id))
 
 def follow(id):
-    cursor.execute('SELECT two FROM test')
-    msg = bot.send_message(id, cursor.fetchone(), reply_markup = key_main())
+
+
+def partners(id):
+
 
 
 #end
