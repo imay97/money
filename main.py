@@ -61,7 +61,6 @@ def start(message):
             id = message.chat.id
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             msg = cur.fetchone()[0]
-            print(msg)
             if msg != None:
                 bot.delete_message(message_id = msg, chat_id = id)
                 msg = bot.send_message(id, "Меню", reply_markup = key_main())
@@ -109,7 +108,7 @@ def partners(id, func):
         if(func == 2):
             cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
             n = cur.fetchone()[0]
-            return n + '''/nЗаработок: ''' + (200 * int(n))
+            return str(n) + '/nЗаработок: ' + str(200 * int(n))
 
 #end
 bot.remove_webhook()
