@@ -77,9 +77,7 @@ def start(message):
             сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
             Жми \"Заработать\" и делай свои первые деньги.''', reply_markup = key_main())
             hash = hashlib.md5(str(id).encode())
-            cur.execute("INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)", \
-            (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), \
-            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id), str(hash.hexdigest())))
+            cur.execute("INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id), str(hash.hexdigest())))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
