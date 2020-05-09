@@ -55,26 +55,29 @@ def key_money():
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
     with conn.cursor() as cur:
-        cur.execute("SELECT id, msg FROM users")
-        if cur.fetchone()[0] != None and cur.fetchone()[1] != None:
-            bot.delete_message(message_id = cur.fetchone()[1], chat_id = message.chat.id)
-            msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
-            conn.commit()
-        else:
-            cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
-            conn.commit()
-            msg = bot.send_message(message.chat.id, "Приветствую тебя.\
-            Надоело выполнять ебанутые\
-            приказы командиров (начальников)?\
-            Заебали самолёты?\
-            Живешь от зарплаты до зарплаты?\
-            Не хочешь брать кредит на машину?\
-            Тогда тебе к нам. С нами ты получишь стабильный заработок,\
-            сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
-            Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
-            conn.commit()
+        try:
+            print(cur.execute("SELECT id, msg FROM users"))
+            #if cur.fetchone()[0] != None and cur.fetchone()[1] != None:
+            #    bot.delete_message(message_id = cur.fetchone()[1], chat_id = message.chat.id)
+            #    msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
+            #    cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
+            #    conn.commit()
+        except:
+            print("No errors")
+        #else:
+        #    cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
+        #    conn.commit()
+        #    msg = bot.send_message(message.chat.id, "Приветствую тебя.\
+        #    Надоело выполнять ебанутые\
+        #    приказы командиров (начальников)?\
+        #    Заебали самолёты?\
+        #    Живешь от зарплаты до зарплаты?\
+        #    Не хочешь брать кредит на машину?\
+        #    Тогда тебе к нам. С нами ты получишь стабильный заработок,\
+        #    сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
+        #    Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
+        #    cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
+        #    conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
