@@ -29,6 +29,10 @@ class WebhookServer(object):
             raise cherrypy.HTTPError(403)
 #begin
 
+conn = psycopg2.connect(dbname='adm', user='adm',
+                    password='adm', host='127.0.0.1')
+cursor = conn.cursor()
+
 def key_main():
     keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
     btns = []
@@ -97,12 +101,9 @@ def callback_inline(call):
         f.write(str(msg.message_id))
 
 def follow(id):
-    conn = psycopg2.connect(dbname='adm', user='adm',
-                        password='adm', host='127.0.0.1')
-    cursor = conn.cursor()
     cursor.execute('SELECT two FROM test')
     msg = bot.send_message(id, cursor.fetchone(), reply_markup = key_main())
-    print (msg)
+
 
 #end
 bot.remove_webhook()
