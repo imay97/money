@@ -102,7 +102,7 @@ def follow(id):
     cursor = conn.cursor()
     cursor.execute('SELECT two FROM test')
     msg = bot.send_message(id, cursor.fetchone(), reply_markup = key_main())
-    print msg
+    print (msg)
 
 #end
 bot.remove_webhook()
