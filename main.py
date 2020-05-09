@@ -56,17 +56,15 @@ def key_money():
 def start(message):
     with conn.cursor() as cur:
         try:
-            cur.execute("SELECT id, msg FROM users")
-            id = cur.fetchone()[0]
-            msg = cur.fetchone()[1]
+            id = message.chat.id
+            cur.execute("SELECT msg FROM users WHERE id = %s", int(id))
+            msg = cur.fetchone()[0]
             if id == message.chat.id and msg != None:
                 bot.delete_message(message_id = msg, chat_id = id)
-                msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
+                msg = bot.send_message(id, "Меню", reply_markup = key_main())
+                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(id)))
                 conn.commit()
         except:
-            cur.execute("INSERT INTO users (id, start, name, date) VALUES (%s, 1, %s, %s)", (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')))
-            conn.commit()
             msg = bot.send_message(message.chat.id, "Приветствую тебя.\
             Надоело выполнять ебанутые\
             приказы командиров (начальников)?\
@@ -76,7 +74,9 @@ def start(message):
             Тогда тебе к нам. С нами ты получишь стабильный заработок,\
             сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.\
             Жми \"Заработать\" и делай свои первые деньги.", reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
+            cur.execute("INSERT INTO users (id, start, name, date, msg) VALUES (%s, 1, %s, %s)", \
+            (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name), \
+            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id)))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
