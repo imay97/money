@@ -3,6 +3,7 @@ import cherrypy
 import psycopg2
 from telebot import types
 import datetime
+import hashlib
 
 API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
 WEBHOOK_HOST = '138.68.22.231'
@@ -75,9 +76,9 @@ def start(message):
             Тогда тебе к нам. С нами ты получишь стабильный заработок,
             сидя дома и играя в доту, забудешь что такое кредиты и финансовые проблемы.
             Жми \"Заработать\" и делай свои первые деньги.''', reply_markup = key_main())
-            cur.execute("INSERT INTO users (id, name, date, msg) VALUES (%s, %s, %s, %s)",
+            cur.execute("INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)",
             (int(message.chat.id), str(message.chat.last_name + ' ' + message.chat.first_name),
-            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id)))
+            datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S'), int(msg.message_id), str(hashlib.md5(b'str(id)).hexdigest())))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
