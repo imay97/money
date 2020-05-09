@@ -57,7 +57,7 @@ def start(message):
     with conn.cursor() as cur:
         cur.execute("SELECT id, msg FROM users")
         if cur.fetchone()[0] == message.chat.id:
-            print(cur.fetchone()[1])
+            print(cur.fetchone()[1], cur.fetchone()[0])
             msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
             cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(message.chat.id)))
             conn.commit()
