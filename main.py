@@ -56,7 +56,7 @@ def key_money():
 def start(message):
     with conn.cursor() as cur:
         try:
-            id = message.chat.id
+            id = int(message.chat.id)
             cur.execute('SELECT msg FROM users WHERE id = %s', id)
             msg = cur.fetchone()[0]
             if id == message.chat.id and msg != None:
