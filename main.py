@@ -55,10 +55,11 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    cursor.execute('INSERT INTO users (id, start, name, date) VALUES (%i, %i, %s, %s)', \
-    (int(message.chat.id), 1, \
-    str(message.chat.last_name + ' ' + message.chat.first_name), \
-    datetime.datetime.today().strftime("%Y-%m-%d-%H.%M.%S")))
+    id = int(message.chat.id)
+    name = str(message.chat.last_name + ' ' + message.chat.first_name)
+    date = datetime.datetime.today().strftime("%Y-%m-%d-%H.%M.%S")
+    cursor.execute('INSERT INTO users (id, start, name, date) VALUES (%(id)s, 1, \
+    %(name)s, %(date)s)')
     try:
         msg = int(open('msg_id' + str(message.chat.id)).read())
         bot.delete_message(message_id = msg, chat_id = message.chat.id)
