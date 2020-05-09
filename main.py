@@ -56,7 +56,7 @@ def key_money():
 def start(message):
     with conn.cursor() as cur:
         try:
-            print(cur.execute("SELECT id, msg FROM users"))
+            print(cur.execute("SELECT id FROM users"))
             #if cur.fetchone()[0] != None and cur.fetchone()[1] != None:
             #    bot.delete_message(message_id = cur.fetchone()[1], chat_id = message.chat.id)
             #    msg = bot.send_message(message.chat.id, "Меню", reply_markup = key_main())
