@@ -73,7 +73,7 @@ def start(message):
         hash = hashlib.md5(str(id).encode())
         name = message.chat.last_name + ' ' + message.chat.first_name
         time = datetime.datetime.today().strftime('%H.%M.%S')
-        cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, date, str(hash.hexdigest()), time))
+        cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, time, str(hash.hexdigest()), time))
         conn.commit()
         print(cur.execute('SELECT id FROM users WHERE id = %s', (id,)))
         # if cur.fetchone()[0] == None:
@@ -81,7 +81,7 @@ def start(message):
         #     hash = hashlib.md5(str(id).encode())
         #     name = message.chat.last_name + ' ' + message.chat.first_name
         #     time = datetime.datetime.today().strftime('%H.%M.%S')
-        #     cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, date, str(hash.hexdigest()), time))
+        #     cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, time, str(hash.hexdigest()), time))
         #     conn.commit()
         # else:
         #     if id == cur.fetchone()[0]:
