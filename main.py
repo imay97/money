@@ -66,9 +66,14 @@ def start(message):
                 conn.commit()
             except:
                 print('Партнёрская ссылка не найдна')
+                conn.rollback()
     with conn.cursor() as cur:
             id = message.chat.id
-            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+            try:
+                cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+            except:
+                conn.rollback()
+                print('Откат транзакции')
             msg = cur.fetchone()[0]
             if msg != None:
                 try:
