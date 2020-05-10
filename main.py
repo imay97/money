@@ -55,7 +55,8 @@ def key_money():
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
-    print(message.text[7:])
+    if message.text[7:] != '':
+        print(message.text[7:])
     with conn.cursor() as cur:
             id = message.chat.id
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
