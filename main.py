@@ -107,8 +107,8 @@ def handler(message):
 📣Свой отзыв пиши мне: @flexone", reply_markup = key_money())
         if(message.text == '💰 Баланс'):
             cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
-            bot.send_message(id, "Ваш баланс: **" + str(cur.fetchone()[0]) + " руб**\
-__Минимальная сумма вывода__: 3000 руб.")
+            bot.send_message(id, "Ваш баланс: \**" + str(cur.fetchone()[0]) + " руб\**\
+\__Минимальная сумма вывода\__: 3000 руб.")
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
