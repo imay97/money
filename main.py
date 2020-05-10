@@ -61,7 +61,7 @@ def start(message):
             cur.execute('SELECT id FROM users WHERE id = %s', (message.chat.id,))
             if not bool(cur.rowcount):
                 cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
-                if not bool(cur.rowcount):
+                if bool(cur.rowcount):
                     id = cur.fetchone()[0]
                     if(id == message.chat.id):
                         bot.send_message(id, "Вы не можете пригласить сами себя", reply_markup = key_main())
@@ -83,7 +83,7 @@ def start(message):
             hash = hashlib.md5(str(id).encode())
             name = str(message.chat.last_name) + ' ' + str(message.chat.first_name)
             time = str(datetime.datetime.today().strftime('%H.%M.%S'))
-            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), time))
+            cur.execute('INSERT INTO users (id, name, ref, balance) VALUES (%s, %s, %s, 0)', (id, name, str(hash.hexdigest())))
             conn.commit()
         else:
             if id == cur.fetchone()[0]:
