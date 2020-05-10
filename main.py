@@ -106,7 +106,7 @@ def handler(message):
             bot.send_message(id, "В этом боте очень простая система: ♻️каналы спонсоров платят боту за рекламу, а бот платит тебе за подписки на эти каналы!\
 Выводить деньги из бота можно на: Сбербанк, Qiwi, ЯДеньги, WebMoney и др.\
 \
-📣Свой отзыв пиши мне: @flexone", reply_markup = key_main())
+📣Свой отзыв пиши мне: @xyu_pizda", reply_markup = key_main())
         if(message.text == '💰 Баланс'):
             cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
             bot.send_message(id, "Ваш баланс: " + str(cur.fetchone()[0]) + " руб\n\
@@ -122,7 +122,8 @@ def callback_inline(call):
 ' + partners(id, 1) + '\n\
 200 руб. за каждого приглашенного Вами партнера\n\
 Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-
+    if call.data == 'follow':
+        bot.send_message(id, '❌ Вы подписались уже на все каналы!')
     if call.data == 'see':
         with conn.cursor() as cur:
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
@@ -135,8 +136,8 @@ def callback_inline(call):
                 seconds = total - (minutes * 60)
                 bot.send_message(id, 'Просмотр записей будет доступен через ' + str(minutes) + ' мин. ' + str(seconds) + ' сек.')
             else:
-                #cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
-                #conn.commit()
+                cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
+                conn.commit()
                 msg = bot.send_message(id, 'Выполнено: 1 из 24')
                 for i in range(25):
                     msg = bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', chat_id=id, message_id=msg.message_id)
