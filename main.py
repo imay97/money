@@ -64,6 +64,7 @@ def admin_panel(message):
     with conn.cursor() as cur:
         cur.execute('SELECT name, pswd FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
+            print(cur.rowcount)
             name = cur.fetchone()[0]
             print(name, cur.rowcount)
             pswd = cur.fetchone()[1]
