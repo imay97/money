@@ -57,6 +57,13 @@ def key_money():
 def start(message):
     if message.text[7:] != '':
         print(message.text[7:])
+        with conn.cursor() as cur:
+            cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
+            try:
+                cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (cur.fetchone()[0], message.chat.id))
+                conn.commit()
+            except:
+                print('Партнёрская ссылка не найдна')
     with conn.cursor() as cur:
             id = message.chat.id
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
