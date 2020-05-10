@@ -123,7 +123,7 @@ def callback_inline(call):
             then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
             delta = now - then
             if(delta.seconds < 3600):
-                bot.send_message(id, 'Просмотр записей будет доступен через ' + (delta.seconds / 60) - (delta.seconds % 60) + ' мин. ' + (delta.seconds % 60) + ' сек.')
+                bot.send_message(id, 'Просмотр записей будет доступен через ' + str((delta.seconds / 60) - (delta.seconds % 60)) + ' мин. ' + str(delta.seconds % 60) + ' сек.')
                 cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
             conn.commit()
 
