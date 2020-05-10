@@ -55,8 +55,17 @@ def key_money():
 
 def key_admin():
     keyboard = types.InlineKeyboardMarkup(row_width = 1)
-    btns = [[types.InlineKeyboardButton('Статистика', callback_data = "statistic_qsxcdlewgfwefwfafmag")], [types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca")]],[[types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb")],[types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb")]],[[types.InlineKeyboardButton('Выход', callback_data = "tvwuien3v489gauoivqhoiguwsdgk")]]
+    btns = []
+    btns1 = []
+    btns2 = []
+    btns.append(types.InlineKeyboardButton('Статистика', callback_data = "statistic_qsxcdlewgfwefwfafmag"))
+    btns.append(types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca"))
+    btns1.append(types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb"))
+    btns1.append(types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb"))
+    btns2.append(types.InlineKeyboardButton('Выход', callback_data = "tvwuien3v489gauoivqhoiguwsdgk"))
     keyboard.add(*btns)
+    keyboard.add(*btns1)
+    keyboard.add(*btns2)
     return keyboard
 
 @bot.message_handler(commands = ['admin'])
