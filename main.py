@@ -61,7 +61,10 @@ def start(message):
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             msg = cur.fetchone()[0]
             if msg != None:
-                bot.delete_message(message_id = msg, chat_id = id)
+                try:
+                    bot.delete_message(message_id = msg, chat_id = id)
+                except:
+                    print('Сообщений не найдено ' + id)
                 msg = bot.send_message(id, "Меню", reply_markup = key_main())
                 cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 conn.commit()
@@ -80,7 +83,10 @@ def handler(message):
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             msg = cur.fetchone()[0]
             if id == message.chat.id and msg != None:
-                bot.delete_message(message_id = msg, chat_id = id)
+                try:
+                    bot.delete_message(message_id = msg, chat_id = id)
+                except:
+                    print('Сообщений н найдено ' + id)
                 if(message.text == '🤑 Заработать'):
                     msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
                 if(message.text == '👥 Партнеры'):
