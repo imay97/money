@@ -104,6 +104,7 @@ def handler(message):
                     print('Сообщений н найдено ' + str(id))
                 if(message.text == '🤑 Заработать'):
                     msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
+                    cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 if(message.text == '👥 Партнеры'):
                     msg = bot.send_message(id, 'Приглашайте партнёров в бот и \
                     получайте за них деньги!\
@@ -113,7 +114,7 @@ def handler(message):
                     \
                     300 руб. за каждого приглашенного Вами партнера\
                     Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
+                    cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 conn.commit()
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
