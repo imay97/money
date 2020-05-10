@@ -90,14 +90,14 @@ def handler(message):
                 if(message.text == '🤑 Заработать'):
                     msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
                 if(message.text == '👥 Партнеры'):
-                    msg = bot.send_message(id, '''Приглашайте партнёров в бот и \
+                    msg = bot.send_message(id, 'Приглашайте партнёров в бот и \
                     получайте за них деньги!\
                     \
-                    Отправьте другу ссылку в телеграме:\
-                    ''' + partners(id, 1) + '''\
+                    Отправьте другу ссылку в телеграме: \
+                    ' + partners(id, 1) + '\
                     \
                     300 руб. за каждого приглашенного Вами партнера\
-                    Приглашённых пользователей: ''' + partners(id, 2), reply_markup = key_main())
+                    Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
                 cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(id)))
                 conn.commit()
 
@@ -114,7 +114,7 @@ def partners(id, func):
             if(func == 2):
                 cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
                 n = cur.fetchone()[0]
-                return str(n) + '/nЗаработок: ' + str(200 * int(n))
+                return str(n) + '\nЗаработок: ' + str(200 * int(n))
         except:
             return 'None'
 
