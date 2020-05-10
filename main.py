@@ -78,7 +78,12 @@ def admin_panel(message):
             name = row[0][1]
             pswd = row[0][2]
             if(pswd == message.text[7:]):
-                bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
+                bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', reply_markup = key_admin())
+            else:
+                bot.send_message(message.chat.id, '❗️❗️❗️Неверный пароль❗️❗️❗️')
+        else:
+            bot.send_message(message.chat.id, '❗️❗️❗️У Вас не доступа к этому разделу. О попытке получения привелигированного доступа с вашего аккаунта, будет сообщено администратору')
+            bot.send_message(message.chat.id, 'Не правильный пароль. Доступ закрыт')
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
