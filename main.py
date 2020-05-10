@@ -121,7 +121,7 @@ def callback_inline(call):
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
             now = datetime.datetime.today()
             then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
-            delta = then - now
+            delta = now - then
             bot.send_message(id, delta.seconds)
             cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
             conn.commit()
