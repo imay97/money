@@ -83,7 +83,7 @@ def start(message):
             hash = hashlib.md5(str(id).encode())
             name = str(message.chat.last_name) + ' ' + str(message.chat.first_name)
             time = str(datetime.datetime.today().strftime('%H.%M.%S'))
-            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest(), time)))
+            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), time))
             conn.commit()
         else:
             if id == cur.fetchone()[0]:
