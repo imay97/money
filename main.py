@@ -58,38 +58,28 @@ def start(message):
     if message.text[7:] != '':
         print(message.text[7:])
         with conn.cursor() as cur:
-            try:
-                cur.execute('SELECT id_me FROM partners WHERE id_partners = %s', (message.chat.id,))
-                if cur.fetchone()[0] != None:
-                    cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
-                    bot.send_message(cur.fetchone()[0], "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
-                    cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (cur.fetchone()[0]))
-                    cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (cur.fetchone()[0], message.chat.id))
-                    conn.commit()
-            except:
+            cur.execute('SELECT id FROM users WHERE id = %s', (message.chat.id,))
+            if cur.fetchone()[0] == None:
+                cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
+                bot.send_message(cur.fetchone()[0], "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
+                cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (cur.fetchone()[0]))
+                cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (cur.fetchone()[0], message.chat.id))
+                conn.commit()
+            else:
                 print('Партнёр уже приглашен')
-    else:
-        with conn.cursor() as cur:
-                id = message.chat.id
-                try:
-                    cur.execute('SELECT id FROM users WHERE id = %s', (id,))
-                except:
-                    conn.rollback()
-                    print('Откат транзакции')
-                try:
-                    if id == cur.fetchone()[0]:
-                        bot.send_message(id, "Меню", reply_markup = key_main())
-                except:
-                        bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
-                        hash = hashlib.md5(str(id).encode())
-                        name = message.chat.last_name + ' ' + message.chat.first_name
-                        date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
-                        try:
-                            cur.execute('INSERT INTO users (id, name, date, ref, balance) VALUES (%s, %s, %s, %s, 0)', (id, name, date, str(hash.hexdigest())))
-                            conn.commit()
-                        except:
-                            conn.rollback()
-                            print('Откат. Пользователь не записан')
+
+    with conn.cursor() as cur:
+            id = message.chat.id
+            cur.execute('SELECT id FROM users WHERE id = %s', (id,))
+            if id == cur.fetchone()[0]:
+                bot.send_message(id, "Меню", reply_markup = key_main())
+            else:
+                bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
+                hash = hashlib.md5(str(id).encode())
+                name = message.chat.last_name + ' ' + message.chat.first_name
+                date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
+                cur.execute('INSERT INTO users (id, name, date, ref, balance) VALUES (%s, %s, %s, %s, 0)', (id, name, date, str(hash.hexdigest())))
+                conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
