@@ -73,10 +73,10 @@ def start(message):
         cur.execute('SELECT id FROM users WHERE id = %s', (id,))
         if not cur.fetchone():
             bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
-            hash = hashlib.md5(str(id).encode())
+            hash = str(hashlib.md5(str(id).encode()))
             name = message.chat.last_name + ' ' + message.chat.first_name
-            time = datetime.datetime.today().strftime('%H.%M.%S')
-            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, time, str(hash.hexdigest()), time))
+            time = str(datetime.datetime.today().strftime('%H.%M.%S'))
+            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, time, hash.hexdigest(), time))
             conn.commit()
         else:
             if id == cur.fetchone()[0]:
