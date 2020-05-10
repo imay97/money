@@ -65,14 +65,11 @@ def admin_panel(message):
         cur.execute('SELECT id, name, pswd FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
             print(cur.rowcount)
-            id = cur.fetchone()[0]
-            print(id)
-            name = cur.fetchone()[1]
-            print(name, cur.rowcount)
-            pswd = cur.fetchone()[2]
-            print(pswd)
+            id = cur.fetchall()[0]
+            name = cur.fetchall()[1]
+            pswd = cur.fetchall()[2]
             if(pswd == message.text[7:]):
-                bot.send_message(message.chat.id, 'Здравствуйте, ' + str(cur.fetchone()[1]).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
+                bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
