@@ -54,7 +54,7 @@ def key_money():
     return keyboard
 
 def key_admin():
-    keyboard = types.InlineKeyboardMarkup(row_width = 1)
+    keyboard = types.InlineKeyboardMarkup()
     btns = []
     btns1 = []
     btns2 = []
