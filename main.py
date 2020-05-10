@@ -63,10 +63,13 @@ def start(message):
                 cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
                 if not bool(cur.rowcount):
                     id = cur.fetchone()[0]
-                    bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
-                    cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (id,))
-                    cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (id, message.chat.id))
-                    conn.commit()
+                    if(id == message.chat.id):
+                        bot.send_message(id, "Вы не можете пригласить сами себя", reply_markup = key_main())
+                    else:
+                        bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
+                        cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (id,))
+                        cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (id, message.chat.id))
+                        conn.commit()
                 else:
                     print('Реф ссылка не найдена')
             else:
