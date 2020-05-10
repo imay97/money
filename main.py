@@ -67,7 +67,7 @@ def admin_panel(message):
             id = cur.fetchone()[0]
             name = cur.fetchone()[1]
             paswd = cur.fetchone()[2]
-            if(pswd = message.text[7:]):
+            if(pswd == message.text[7:]):
                 bot.send_message(message.chat.id, 'Здравствуйте, ' + str(cur.fetchone()[1]).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
