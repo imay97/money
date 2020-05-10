@@ -62,12 +62,14 @@ def key_admin():
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
     with conn.cursor() as cur:
-        cur.execute('SELECT name, pswd FROM admins WHERE id = %s', (message.chat.id,))
+        cur.execute('SELECT id, name, pswd FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
             print(cur.rowcount)
-            name = cur.fetchone()[0]
+            id = cur.fetchone()[0]
+            print(id)
+            name = cur.fetchone()[1]
             print(name, cur.rowcount)
-            pswd = cur.fetchone()[1]
+            pswd = cur.fetchone()[2]
             print(pswd)
             if(pswd == message.text[7:]):
                 bot.send_message(message.chat.id, 'Здравствуйте, ' + str(cur.fetchone()[1]).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
