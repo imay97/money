@@ -59,9 +59,9 @@ def start(message):
         print(message.text[7:])
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM users WHERE id = %s', (message.chat.id,))
-            if not bool(cur.rowcount):
-                id = cur.fetchone()[0]
+            if bool(cur.rowcount):
                 cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
+                id = cur.fetchone()[0]
                 bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
                 cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (id,))
                 cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (id, message.chat.id))
