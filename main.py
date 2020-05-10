@@ -55,7 +55,7 @@ def key_money():
 
 def key_admin():
     keyboard = types.InlineKeyboardMarkup(row_width = 1)
-    btns = [(types.InlineKeyboardButton('Статистика', callback_data = "statistic_qsxcdlewgfwefwfafmag")), (types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca"))][(types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb")),(types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb"))][(types.InlineKeyboardButton('Выход', callback_data = "tvwuien3v489gauoivqhoiguwsdgk"))]
+    btns = [[types.InlineKeyboardButton('Статистика', callback_data = "statistic_qsxcdlewgfwefwfafmag")], [types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca")]],[[types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb")],[types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb")]],[[types.InlineKeyboardButton('Выход', callback_data = "tvwuien3v489gauoivqhoiguwsdgk")]]
     keyboard.add(*btns)
     return keyboard
 
