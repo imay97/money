@@ -110,7 +110,7 @@ def partners(id, func):
         try:
             if(func == 1):
                 cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
-                return 'https:/t.me/imaycash_bot?start=' + cur.fetchone()[0]
+                return 'https://t.me/imaycash_bot?start=' + cur.fetchone()[0]
             if(func == 2):
                 cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
                 n = cur.fetchone()[0]
