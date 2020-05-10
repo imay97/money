@@ -118,7 +118,7 @@ def callback_inline(call):
     if call.data == 'see':
         with conn.cursor() as cur:
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
-            now = datemite.datetime.today().strftime('%H.%M.%S')
+            now = datetime.datetime.today().strftime('%H.%M.%S')
             then = datetime.strptime(cur.fetchone()[0], '%H.%M.%S')
             delta = then - now
             bot.send_message(id, delta)
