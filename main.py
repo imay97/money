@@ -65,9 +65,8 @@ def admin_panel(message):
         cur.execute('SELECT id, name, pswd FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
             print(cur.rowcount)
-            id = cur.fetchall()[0][0]
-            name = cur.fetchall()[0][1]
-            pswd = cur.fetchall()[0][2]
+            for cur.fetchall() in row:
+                print(row)
             print(str(id) + str(name) + str(pswd))
             if(pswd == message.text[7:]):
                 bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
