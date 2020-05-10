@@ -53,8 +53,11 @@ def key_money():
     keyboard.add(*btns)
     return keyboard
 
+def key_admin():
+    print('admin')
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
+    bot.send_message(message.chat.id, message.text[7:])
     with conn.cursor() as cur:
         cur.execute('SELECT id, name FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
