@@ -70,22 +70,17 @@ def start(message):
 
     with conn.cursor() as cur:
         id = message.chat.id
-        hash = hashlib.md5(str(id).encode())
-        name = message.chat.last_name + ' ' + message.chat.first_name
-        time = datetime.datetime.today().strftime('%H.%M.%S')
-        cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), str(time)))
-        conn.commit()
-        print(cur.execute('SELECT id FROM users WHERE id = %s', (id,)))
-        # if cur.fetchone()[0] == None:
-        #     bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
-        #     hash = hashlib.md5(str(id).encode())
-        #     name = message.chat.last_name + ' ' + message.chat.first_name
-        #     time = datetime.datetime.today().strftime('%H.%M.%S')
-        #     cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, time, str(hash.hexdigest()), time))
-        #     conn.commit()
-        # else:
-        #     if id == cur.fetchone()[0]:
-        #         bot.send_message(id, "Меню", reply_markup = key_main())
+        cur.execute('SELECT id FROM users WHERE id = %s', (id,))
+        if not cur.fetchone()[0]:
+            bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
+            hash = hashlib.md5(str(id).encode())
+            name = message.chat.last_name + ' ' + message.chat.first_name
+            time = datetime.datetime.today().strftime('%H.%M.%S')
+            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, time, str(hash.hexdigest()), time))
+            conn.commit()
+        else:
+            if id == cur.fetchone()[0]:
+                bot.send_message(id, "Меню", reply_markup = key_main())
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
