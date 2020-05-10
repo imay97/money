@@ -114,7 +114,6 @@ def callback_inline(call):
 ' + partners(id, 1) + '\n\
 200 руб. за каждого приглашенного Вами партнера\n\
 Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-    if call.data == 'follow':
 
     if call.data == 'see':
         with conn.cursor() as cur:
