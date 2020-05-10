@@ -124,7 +124,7 @@ def callback_inline(call):
             delta = now - then
             if(delta.seconds < 3600):
                 bot.send_message(id, 'Просмотр записей будет доступен через ' + (delta.seconds / 60) - (delta.seconds % 60) + ' мин. ' + (delta.seconds % 60) + ' сек.')
-            cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
+                cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
             conn.commit()
 
 def partners(id, func):
