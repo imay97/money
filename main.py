@@ -53,6 +53,13 @@ def key_money():
     keyboard.add(*btns)
     return keyboard
 
+@bot.message_handler(commands = ['admin'])
+def admin_panel(message):
+    with conn.cursor() as cur:
+        cur.execute('SELECT id, name FROM admins WHERE id = %s', (message.chat.id,))
+        if bool(cur.rowcount):
+            bot.send_message(message.chat.id, 'Здравствуйте, ' + str(cur.fetchone()[1]).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_main())
+
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
     if message.text[7:] != '':
