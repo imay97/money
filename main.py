@@ -71,7 +71,7 @@ def start(message):
     with conn.cursor() as cur:
         id = message.chat.id
         cur.execute('SELECT id FROM users WHERE id = %s', (id,))
-        if !(cur.fetchone()):
+        if not cur.fetchone()[0]:
             bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
             hash = hashlib.md5(str(id).encode())
             name = message.chat.last_name + ' ' + message.chat.first_name
