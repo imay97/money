@@ -61,6 +61,8 @@ def start(message):
             cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
             try:
                 cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (cur.fetchone()[0], message.chat.id))
+                msg = bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
+                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 conn.commit()
             except:
                 print('Партнёрская ссылка не найдна')
