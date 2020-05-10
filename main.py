@@ -54,14 +54,21 @@ def key_money():
     return keyboard
 
 def key_admin():
-    print('admin')
+    keyboard = types.InlineKeyboardMarkup(row_width = 1)
+    btns = [(types.InlineKeyboardButton('Статистика', callback_data = "statistic_qsxcdlewgfwefwfafmag")), (types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca"))][(types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb")),(types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb"))][(types.InlineKeyboardButton('Выход', callback_data = "tvwuien3v489gauoivqhoiguwsdgk"))]
+    keyboard.add(*btns)
+    return keyboard
+
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
-    bot.send_message(message.chat.id, message.text[7:])
     with conn.cursor() as cur:
-        cur.execute('SELECT id, name FROM admins WHERE id = %s', (message.chat.id,))
+        cur.execute('SELECT name, pswd FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
-            bot.send_message(message.chat.id, 'Здравствуйте, ' + str(cur.fetchone()[1]).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_main())
+            id = cur.fetchone()[0]
+            name = cur.fetchone()[1]
+            paswd = cur.fetchone()[2]
+            if(pswd = message.text[7:]):
+                bot.send_message(message.chat.id, 'Здравствуйте, ' + str(cur.fetchone()[1]).replace('None', '') + '.\n❗️❗️❗️ Вы вошли как администратор', reply_markup = key_admin())
 
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
