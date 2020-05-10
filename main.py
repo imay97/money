@@ -71,8 +71,9 @@ def start(message):
     with conn.cursor() as cur:
             id = message.chat.id
             cur.execute('SELECT id FROM users WHERE id = %s', (id,))
-            if id == cur.fetchone()[0]:
-                bot.send_message(id, "Меню", reply_markup = key_main())
+            if cur.fetchone()[0] != None:
+                if id == cur.fetchone()[0]:
+                    bot.send_message(id, "Меню", reply_markup = key_main())
             else:
                 bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
                 hash = hashlib.md5(str(id).encode())
@@ -119,7 +120,7 @@ def callback_inline(call):
         with conn.cursor() as cur:
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
             now = datetime.datetime.today().strftime('%H.%M.%S')
-            then = datetime.datetime.strptime(cur.fetchone()[0], '%H.%M.%S')
+            then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
             delta = then - now
             bot.send_message(id, delta)
 
