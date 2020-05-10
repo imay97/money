@@ -113,7 +113,7 @@ def handler(message):
                     \
                     300 руб. за каждого приглашенного Вами партнера\
                     Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (int(msg.message_id), int(id)))
+                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
                 conn.commit()
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
