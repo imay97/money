@@ -130,9 +130,12 @@ def callback_inline(call):
             else:
                 #cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
                 #conn.commit()
-                msg = bot.send_message(id, 'Просмтор: 1')
-                for i in range(5):
-                    msg = bot.edit_message_text('Просмтр: ' + str(i), chat_id=id, message_id=msg.message_id)
+                msg = bot.send_message(id, 'Выполнено: 1 из 24')
+                for i in range(25):
+                    msg = bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', chat_id=id, message_id=msg.message_id)
+                msg = bot.edit_message_text('Выполено: 25 из 25\nНачислено: 50 руб.', chat_id=id, message_id=msg.message_id)
+                cur.execute('UPDATE users SET balance = balance + 50 WHERE id = %s', (id,))
+                conn.commit()
 
 def partners(id, func):
     with conn.cursor() as cur:
