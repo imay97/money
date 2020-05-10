@@ -75,7 +75,7 @@ def start(message):
         if not bool(cur.rowcount):
             bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
             hash = hashlib.md5(str(id).encode())
-            name = message.chat.last_name + ' ' + message.chat.first_name
+            name = str(message.chat.last_name) + ' ' + str(message.chat.first_name)
             time = str(datetime.datetime.today().strftime('%H.%M.%S'))
             cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), time))
             conn.commit()
