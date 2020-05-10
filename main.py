@@ -123,6 +123,7 @@ def callback_inline(call):
             then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
             delta = then - now
             bot.send_message(id, delta.seconds)
+            cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
 
 def partners(id, func):
     with conn.cursor() as cur:
