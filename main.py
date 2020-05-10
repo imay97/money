@@ -132,7 +132,7 @@ def callback_inline(call):
                 conn.commit()
                 msg = bot.send_message(id, 'Просмтор: 1')
                 for i in range(5):
-                    msg = bot.edit_message_text('Просмтр: ' + i, chat_id=id, message_id=msg.message_id)
+                    msg = bot.edit_message_text('Просмтр: ' + str(i), chat_id=id, message_id=msg.message_id)
 
 def partners(id, func):
     with conn.cursor() as cur:
