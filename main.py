@@ -82,8 +82,12 @@ def start(message):
                     hash = hashlib.md5(str(id).encode())
                     name = message.chat.last_name + ' ' + message.chat.first_name
                     date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
-                    cur.execute('INSERT INTO users (id, name, date, ref, balance) VALUES (%s, %s, %s, %s, 0)', (id, name, date, str(hash.hexdigest())))
-                    conn.commit()
+                    try:
+                        cur.execute('INSERT INTO users (id, name, date, ref, balance) VALUES (%s, %s, %s, %s, 0)', (id, name, date, str(hash.hexdigest())))
+                        conn.commit()
+                    except:
+                        conn.rollback()
+                        print('Откат. Пользователь не записан')
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
