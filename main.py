@@ -59,63 +59,56 @@ def start(message):
         print(message.text[7:])
         with conn.cursor() as cur:
             try:
-                cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
-                cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (cur.fetchone()[0], message.chat.id))
-                msg = bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-                conn.commit()
+                cur.execute('SELECT id_me FROM partners WHERE id_partners = %s', (message.chat.id,))
+                if cur.fetchone()[0] != None:
+                    cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
+                    cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (cur.fetchone()[0], message.chat.id))
+                    conn.commit()
+                    bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
             except:
-                print('Партнёрская ссылка не найдна')
-                conn.rollback()
+                print('Партнёр уже приглашен')
     with conn.cursor() as cur:
             id = message.chat.id
             try:
-                cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+                cur.execute('SELECT id FROM users WHERE id = %s', (id,))
             except:
                 conn.rollback()
                 print('Откат транзакции')
-            msg = cur.fetchone()[0]
-            if msg != None:
-                try:
-                    bot.delete_message(message_id = msg, chat_id = id)
-                except:
-                    print('Сообщений не найдено ' + str(id))
-                msg = bot.send_message(id, "Меню", reply_markup = key_main())
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-                conn.commit()
-            else:
-                msg = bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
-                hash = hashlib.md5(str(id).encode())
-                name = message.chat.last_name + ' ' + message.chat.first_name
-                date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
-                cur.execute('INSERT INTO users (id, name, date, msg, ref) VALUES (%s, %s, %s, %s, %s)', (id, name, date, msg.message_id, str(hash.hexdigest())))
-                conn.commit()
+            try:
+                if id == cur.fetchone()[0]:
+                    bot.send_message(id, "Меню", reply_markup = key_main())
+            except:
+                    bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
+                    hash = hashlib.md5(str(id).encode())
+                    name = message.chat.last_name + ' ' + message.chat.first_name
+                    date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
+                    cur.execute('INSERT INTO users (id, name, date, ref, balance) VALUES (%s, %s, %s, %s, 0)', (id, name, date, str(hash.hexdigest())))
+                    conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
     with conn.cursor() as cur:
-            id = int(message.chat.id)
-            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
-            msg_ = cur.fetchone()[0]
-            if id == message.chat.id and msg_ != None:
-                try:
-                    bot.delete_message(message_id = msg, chat_id = id)
-                except:
-                    print('Сообщений н найдено ' + str(id))
-                if(message.text == '🤑 Заработать'):
-                    msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
-                    cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-                if(message.text == '👥 Партнеры'):
-                    msg = bot.send_message(id, 'Приглашайте партнёров в бот и \
-                    получайте за них деньги!\
-                    \
-                    Отправьте другу ссылку в телеграме: \
-                    ' + partners(id, 1) + '\
-                    \
-                    300 руб. за каждого приглашенного Вами партнера\
-                    Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-                    cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-                conn.commit()
+        id = int(message.chat.id)
+        if(message.text == '🤑 Заработать'):
+            bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
+        if(message.text == '👥 Партнеры'):
+            bot.send_message(id, 'Приглашайте партнёров в бот и \
+            получайте за них деньги!\
+            \
+            Отправьте другу ссылку в телеграме: \
+            ' + partners(id, 1) + '\
+            \
+            200 руб. за каждого приглашенного Вами партнера\
+            Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
+        if(message.text == '❔ Помощь'):
+            bot.send_message(id, "В этом боте очень простая система: ♻️каналы спонсоров платят боту за рекламу, а бот платит тебе за подписки на эти каналы!\
+Выводить деньги из бота можно на: Сбербанк, Qiwi, ЯДеньги, WebMoney и др.\
+\
+📣Свой отзыв пиши мне: @flexone", reply_markup = key_money())
+        if(message.text == '💰 Баланс'):
+            cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
+            bot.sent_message(id, "Ваш баланс: **" + str(cur.fetchone()[0]) + " руб**\
+__Минимальная сумма вывода__: 3000 руб.")
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
