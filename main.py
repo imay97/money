@@ -77,8 +77,8 @@ def start(message):
                 bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
                 hash = hashlib.md5(str(id).encode())
                 name = message.chat.last_name + ' ' + message.chat.first_name
-                date = datetime.datetime.today().strftime('%Y-%m-%d-%H.%M.%S')
-                cur.execute('INSERT INTO users (id, name, date, ref, balance) VALUES (%s, %s, %s, %s, 0)', (id, name, date, str(hash.hexdigest())))
+                time = datetime.datetime.today().strftime('%H.%M.%S')
+                cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, date, str(hash.hexdigest()), time))
                 conn.commit()
 
 @bot.message_handler(content_types=['text'])
@@ -106,7 +106,23 @@ def handler(message):
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
-    print("callback")
+    id = call.message.chat.id
+    if call.data == 'say':
+        bot.send_message(id, 'Приглашайте партнёров в бот и \
+получайте за них деньги!\n\
+Отправьте другу ссылку в телеграме: \n\
+' + partners(id, 1) + '\n\
+200 руб. за каждого приглашенного Вами партнера\n\
+Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
+    if call.data == 'follow':
+
+    if call.data == 'see':
+        with conn.cursor() as cur:
+            cur.execute('SELECT time FROM users WHERE id = %s', (id,))
+            now = datemite.datetime.today().strftime('%H.%M.%S')
+            then = datetime.strptime(cur.fetchone()[0], '%H.%M.%S')
+            delta = then - now
+            bot.send_message(id, delta)
 
 def partners(id, func):
     with conn.cursor() as cur:
