@@ -67,6 +67,13 @@ def key_admin():
     keyboard.add(*btns2)
     return keyboard
 
+def key_exit():
+    keyboard = types.InlineKeyboardMarkup()
+    btns = []
+    btns.append(types.InlineKeyboardButton('Ок', callback_data = "ok"))
+    keyboard.add(*btns)
+    return keyboard
+
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
     with conn.cursor() as cur:
@@ -154,15 +161,22 @@ def callback_inline(call):
     if call.data == 'statistic_qsxcdlewgfwefwfafmag':
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
-            if bool(cur.fetchone()[0]):
+            if bool(cur.rowcount):
                 cur.execute('SELECT COUNT(id) FROM users')
                 all = cur.fetchone()[0]
                 cur.execute('SELECT COUNT(id) FROM users WHERE active - %s <= 7', (datetime.datetime.today().strftime('%Y-%m-%d'),))
                 active = cur.fetchone()[0]
                 cur.execute('SELECT COUNT(id_partners) FROM partners')
                 ref = cur.fetchone()[0]
-                bot.send_message(id, 'Всего пользователей: ' + str(all) + '\n\
-Активных(за неделю): ' + str(active) + '\nПриглашенных: ' + str(ref) + '\nРекламные ссылки: 0')
+                msg = bot.send_message(id, 'Всего пользователей: ' + str(all) + '\n\
+Активных(за неделю): ' + str(active) + '\nПриглашенных: ' + str(ref) + '\nРекламные ссылки: 0', reply_markup = key_exit())
+                cur.execute('UPDATE admins SET msg = %s WHERE id = %s',(msg.message_id, id))
+                conn.commit()
+    if call.data == 'ok':
+        with conn.cursor() as cur:
+            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+            if bool(cur.rowcount):
+                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
     if call.data == 'say':
         bot.send_message(id, 'Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
