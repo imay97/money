@@ -5,13 +5,10 @@ from telebot import types
 import datetime
 import hashlib
 import dropbox
-
-dbx_token = ''
-API_TOKEN = ''
-with open('/home/tele/money/dbx', 'r') as f:
-    dbx_token = f.read()
-with open('/home/tele/money/tlg', 'r') as f:
-    API_TOKEN = f.read()
+import sys
+sys.path.append("../")
+import dbx
+import tlg
 
 WEBHOOK_HOST = '138.68.22.231'
 WEBHOOK_PORT = 80 #8443 80 88 443
