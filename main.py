@@ -83,14 +83,8 @@ def admin_panel(message):
             id = row[0][0]
             name = row[0][1]
             pswd = row[0][2]
-            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
-            if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
             if(pswd == message.text[7:]):
-                bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', reply_markup = key_admin())
+                msg = bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', reply_markup = key_admin())
             else:
                 bot.send_message(message.chat.id, '❗️❗️❗️Неверный пароль❗️❗️❗️')
         else:
@@ -232,8 +226,10 @@ def callback_inline(call):
         with conn.cursor() as cur:
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-
+                try:
+                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
+                except:
+                    print('Сообщение не найдено')
         bot.send_message(id, 'Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
 Отправьте другу ссылку в телеграме: \n\
