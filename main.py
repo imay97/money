@@ -163,7 +163,7 @@ def handle_docs_photo(message):
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                print(dbx.files_get_temporary_link('/doc').link)
+                print(dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link)
                 send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
