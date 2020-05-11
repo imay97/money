@@ -135,7 +135,7 @@ def send(text, markup, id):
 @bot.message_handler(content_types=['document'])
 def handle_docs_photo(message):
     with conn.cursor() as cur:
-        cur.execute('SELECT mod FROM admins WHERE id = %s', (message.chat.id),)
+        cur.execute('SELECT mod FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
             mod = cur.fetchone()[0]
             if mod == 2:
