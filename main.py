@@ -153,16 +153,18 @@ def handle_docs_photo(message):
             if mod == 2:
                 file_info = bot.get_file(message.document.file_id)
                 downloaded_file = bot.download_file(file_info.file_path)
-                src = '/home/tele/money/content/doc';
+                src = '/home/tele/money/content/' + message.document.file_id;
                 with open(src, 'wb') as new_file:
                     new_file.write(downloaded_file)
                 with open(src, 'rb') as f:
-                    dbx.files_upload(f.read(), '/doc')
+                    dbx.files_upload(f.read(), '/' + message.document.file_id)
+                with open('/home/tele/money/content/file', 'w') as f:
+                    f.write(message.document.file_id)
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
                 print(dbx.files_get_temporary_link('/doc').link)
-                send('<a href="' + dbx.files_get_temporary_link('/doc').link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
+                send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
 # src = '/home/tele/money/content/' + message.document.file_name;
@@ -270,8 +272,8 @@ def callback_inline(call):
         text = ''
         with open('/home/tele/money/content/text', 'r') as f:
             text = f.read()
-        print(dbx.files_get_temporary_link('/doc').link)
-        send('<a href="' + dbx.files_get_temporary_link('/doc').link + '">&#8203;</a> %s' % text, key_send_admin(), id)
+        print(dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link)
+        send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % open('/home/tele/money/content/file', 'r').read(), key_send_admin(), id)
 
     if call.data == 'wefkbamklcsdfdsfhbffwca':
         with conn.cursor() as cur:
