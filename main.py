@@ -70,7 +70,7 @@ def key_admin():
 def key_exit():
     keyboard = types.InlineKeyboardMarkup()
     btns = []
-    btns.append(types.InlineKeyboardButton('Ок', callback_data = "ok"))
+    btns.append(types.InlineKeyboardButton('Меню', callback_data = "ok"))
     keyboard.add(*btns)
     return keyboard
 
