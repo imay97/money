@@ -85,13 +85,13 @@ def key_exit_admin():
 
 def mailing(id):
     msg = send('Отправьте текст', None, id)
-    bot.register_next_step_handler(msg, text_mailing)
+    bot.register_next_step_handler(chat_id = id, text_mailing)
 
 def text_mailing(message):
     if message.text != '!':
         text = message.text
     msg = send('Отправьте картинку, видео, или стик', None, message.chat.id)
-    bot.register_next_step_handler(msg, conent_mailing)
+    bot.register_next_step_handler(chat_id = id, conent_mailing)
 
 def content_mailing(message):
     send(message, None, message.chat.id)
