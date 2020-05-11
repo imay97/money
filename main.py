@@ -92,12 +92,12 @@ def send(text, markup, id):
                 print('Can\'t delete message')
         if markup != None:
             msg = bot.send_message(id, text, reply_markup = markup)
-            cur.execute('UPDATE users SET msg = %s', (msg.message_id,))
+            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
             conn.commit()
             return msg.message_id
         else:
             msg = bot.send_message(id, text)
-            cur.execute('UPDATE users SET msg = %s', (msg.message_id,))
+            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
             conn.commit()
             return msg.message_id
 
