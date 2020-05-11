@@ -145,7 +145,7 @@ def handle_docs_photo(message):
                 src = '/home/tele/money/content/' + message.document.file_name;
                 with open(src, 'wb') as new_file:
                     new_file.write(downloaded_file)
-                drb = dropbox.Dropbox('D_Y0OZ93PXAAAAAAAAAADWMa_VV5YOSGGj_6unSdwHs2oLRNroYRcXmO2-Az-vKT')
+                dbx = dropbox.Dropbox('D_Y0OZ93PXAAAAAAAAAADWMa_VV5YOSGGj_6unSdwHs2oLRNroYRcXmO2-Az-vKT')
                 with open(src, 'rb') as f:
                     dbx.files_upload(f.read(), message.document.file_name)
                 text = ''
