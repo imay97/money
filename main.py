@@ -142,7 +142,7 @@ def handle_docs_photo(message):
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                bot.send_message(message.chat.id, 'https://sun9-30.userapi.com/c841238/v841238761/7df52/vx_r7KiWXfc.jpg &8203;', parse_mode="HTML")
+                bot.send_message(message.chat.id, '<a href="https://sun9-30.userapi.com/c841238/v841238761/7df52/vx_r7KiWXfc.jpg">&8203;</a>', parse_mode="HTML")
 
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
