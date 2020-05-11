@@ -140,7 +140,7 @@ def start(message):
             if bool(cur.rowcount):
                 cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
                 if bool(cur.rowcount):
-                    bot.edit_message_text("Меню", reply_markup = key_main(), chat_id = id, message_id = cur.fetchone()[0])
+                    bot.edit_message_text("Меню", chat_id = id, message_id = cur.fetchone()[0], reply_markup = key_main())
             cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
 
