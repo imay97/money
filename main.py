@@ -9,6 +9,7 @@ import dropbox
 API_TOKEN = ''
 with open('/home/tele/money/tlg', 'r') as f:
     API_TOKEN = f.read()
+print(API_TOKEN)
 WEBHOOK_HOST = '138.68.22.231'
 WEBHOOK_PORT = 80 #8443 80 88 443
 WEBHOOK_LISTEN = '0.0.0.0'
