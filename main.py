@@ -161,8 +161,8 @@ def callback_inline(call):
                 active = cur.fetchone()[0]
                 cur.execute('SELECT COUNT(id_partners) FROM partners')
                 ref = cur.fetchone()[0]
-                bot.send_message(id, 'Всего пользователей: ' + all + '\n\
-Активных(за неделю): ' + active + '\nПриглашенных: ' + ref + '\nРекламные ссылки: 0')
+                bot.send_message(id, 'Всего пользователей: ' + str(all) + '\n\
+Активных(за неделю): ' + str(active) + '\nПриглашенных: ' + str(ref) + '\nРекламные ссылки: 0')
     if call.data == 'say':
         bot.send_message(id, 'Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
