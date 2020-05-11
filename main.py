@@ -7,8 +7,8 @@ import hashlib
 import dropbox
 import sys
 sys.path.append("/home/tele/money/")
-import dbx
-import tlg
+from dbx import *
+from tlg import *
 
 WEBHOOK_HOST = '138.68.22.231'
 WEBHOOK_PORT = 80 #8443 80 88 443
