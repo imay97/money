@@ -62,7 +62,6 @@ def key_admin():
     btns.append(types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca"))
     btns1.append(types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb"))
     btns1.append(types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb"))
-    btns2.append(types.InlineKeyboardButton('Выход', callback_data = "tvwuien3v489gauoivqhoiguwsdgk"))
     keyboard.add(*btns)
     keyboard.add(*btns1)
     keyboard.add(*btns2)
@@ -116,15 +115,20 @@ def start(message):
             name = str(message.chat.last_name) + ' ' + str(message.chat.first_name)
             time = str(datetime.datetime.today().strftime('%H.%M.%S'))
             cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), time))
+            cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
         else:
             if id == cur.fetchone()[0]:
                 bot.send_message(id, "Меню", reply_markup = key_main())
+            cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+            conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
     with conn.cursor() as cur:
         id = int(message.chat.id)
+        cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+        conn.commit()
         if(message.text == '🤑 Заработать'):
             bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
         if(message.text == '👥 Партнеры'):
@@ -147,6 +151,20 @@ def handler(message):
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     id = call.message.chat.id
+    cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+    conn.commit()
+    if call.data == 'statistic_qsxcdlewgfwefwfafmag':
+        with conn.cursor() as cur:
+            cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
+            if bool(cur.fetchone()[0]):
+                cur.execute('SELECT COUNT(id) FROM users')
+                all = cur.fetchone()[0]
+                cur.execute('SELECT COUNT(id) FROM users WHERE active - %s <= 7')
+                active = cur.fetchone()[0]
+                cur.execute('SELECT COUNT(id_partners) FROM partners')
+                ref = cur.fetchone()[0]
+                bot.send_message(id, 'Всего пользователей: ' + all + '\n\
+Активных(за неделю): ' + active + '\nПриглашенных: ' + ref + '\nРекламные ссылки: 0')
     if call.data == 'say':
         bot.send_message(id, 'Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
