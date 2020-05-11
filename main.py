@@ -200,7 +200,7 @@ def callback_inline(call):
                 seconds = total - (minutes * 60)
                 bot.send_message(id, 'Просмотр записей будет доступен через ' + str(minutes) + ' мин. ' + str(seconds) + ' сек.')
             else:
-                cur.execute('UPDATE users SET time = %s', (now.strftime('%H.%M.%S'),))
+                cur.execute('UPDATE users SET time = %s WHERE id = %s', (now.strftime('%H.%M.%S'), id))
                 conn.commit()
                 msg = bot.send_message(id, 'Выполнено: 1 из 24')
                 for i in range(25):
