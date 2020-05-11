@@ -5,6 +5,8 @@ from telebot import types
 import datetime
 import hashlib
 import dropbox
+import sys
+sys.path.append("/home/tele/money/")
 import dbx
 import tlg
 
