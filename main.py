@@ -63,6 +63,7 @@ def key_admin():
     btns.append(types.InlineKeyboardButton('Рассылка', callback_data = "wefkbamklcsdfdsfhbffwca"))
     btns1.append(types.InlineKeyboardButton('Задания', callback_data = "uhbergubidvskmcxrnladfsbfgb"))
     btns1.append(types.InlineKeyboardButton('Рекламная рефералка', callback_data = "123g278hgui34tmdsknladfsbfgb"))
+    btns2.append(types.InlineKeyboardButton('Выход', callback_data = "ok"))
     keyboard.add(*btns)
     keyboard.add(*btns1)
     keyboard.add(*btns2)
@@ -81,6 +82,19 @@ def key_exit_admin():
     btns.append(types.InlineKeyboardButton('Меню', callback_data = "ok_admin"))
     keyboard.add(*btns)
     return keyboard
+
+def mailing(id):
+    msg = send('Отправьте текст', None, id)
+    bot.register_next_step_handler(msg, text_mailing)
+
+def text_mailing(message):
+    if message.text != '!':
+        text = message.text
+    msg = send('Отправьте картинку, видео, или стик', None, message.chat.id)
+    bot.register_next_step_handler(msg, conent_mailing)
+
+def content_mailing(message):
+    send(message, None, message.chat.id)
 
 def send(text, markup, id):
     with conn.cursor() as cur:
@@ -182,6 +196,12 @@ def handler(message):
 def callback_inline(call):
     id = call.message.chat.id
 
+    if call.data = 'wefkbamklcsdfdsfhbffwca':
+        with conn.cursor() as cur:
+            cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
+            if bool(cur.rowcount):
+                mailing(id)
+
     if call.data == 'statistic_qsxcdlewgfwefwfafmag':
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
@@ -204,7 +224,7 @@ def callback_inline(call):
                 send('Здравствуйте, ' + name.replace('None', '') + '.\nВы вошли как администратор', key_admin(), id)
 
     if call.data == 'ok':
-        send("Выберите способ заработка", key_main(), id)
+        send("Меню", key_main(), id)
 
     if call.data == 'say':
         send('Приглашайте партнёров в бот и \
