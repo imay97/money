@@ -273,7 +273,7 @@ def callback_inline(call):
         with open('/home/tele/money/content/text', 'r') as f:
             text = f.read()
         print(dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link)
-        send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % open('/home/tele/money/content/file', 'r').read(), key_send_admin(), id)
+        send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % open('/home/tele/money/content/text', 'r').read(), key_send_admin(), id)
 
     if call.data == 'wefkbamklcsdfdsfhbffwca':
         with conn.cursor() as cur:
