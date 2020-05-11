@@ -142,7 +142,7 @@ def handle_docs_photo(message):
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                bot.send_media_group(message.chat.id, [InputMediaPhoto(message.photo[0].file_id), text])
+                bot.send_message(message.chat.id, '<a href="https://avatars.mds.yandex.net/get-pdb/2491915/be6af928-1dd0-45fa-aa29-16a0bcc95b10/s1200">&#8203;</a>', parse_mode="HTML")
 
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
