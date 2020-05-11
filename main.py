@@ -115,19 +115,19 @@ def start(message):
             name = str(message.chat.last_name) + ' ' + str(message.chat.first_name)
             time = str(datetime.datetime.today().strftime('%H.%M.%S'))
             cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), time))
-            cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+            cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
         else:
             if id == cur.fetchone()[0]:
                 bot.send_message(id, "Меню", reply_markup = key_main())
-            cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+            cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
     with conn.cursor() as cur:
         id = int(message.chat.id)
-        cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+        cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
         conn.commit()
         if(message.text == '🤑 Заработать'):
             bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
@@ -151,7 +151,7 @@ def handler(message):
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     id = call.message.chat.id
-    cur.execute('UPDATE INTO users (active) VALUES (%s) WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+    cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
     conn.commit()
     if call.data == 'statistic_qsxcdlewgfwefwfafmag':
         with conn.cursor() as cur:
