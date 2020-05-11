@@ -37,6 +37,7 @@ class WebhookServer(object):
 
 conn = psycopg2.connect(dbname='adm', user='adm',
                     password='adm', host='127.0.0.1')
+dbx = dropbox.Dropbox(dbx_token)
 
 def key_main():
     keyboard = types.ReplyKeyboardMarkup(row_width = 2, resize_keyboard = True)
@@ -152,17 +153,16 @@ def handle_docs_photo(message):
             if mod == 2:
                 file_info = bot.get_file(message.document.file_id)
                 downloaded_file = bot.download_file(file_info.file_path)
-                src = '/home/tele/money/content/' + message.document.file_name;
+                src = '/home/tele/money/content/doc';
                 with open(src, 'wb') as new_file:
                     new_file.write(downloaded_file)
-                dbx = dropbox.Dropbox(dbx_token)
                 with open(src, 'rb') as f:
-                    dbx.files_upload(f.read(), '/' + message.document.file_name)
+                    dbx.files_upload(f.read(), '/doc')
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                print(dbx.files_get_temporary_link('/' + message.document.file_name).link)
-                send('<a href="' + dbx.files_get_temporary_link('/' + message.document.file_name).link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
+                print(dbx.files_get_temporary_link('/doc').link)
+                send('<a href="' + dbx.files_get_temporary_link('/doc').link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
 # src = '/home/tele/money/content/' + message.document.file_name;
@@ -265,6 +265,13 @@ def handler(message):
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     id = call.message.chat.id
+
+    if call.data == 'send_post':
+        text = ''
+        with open('/home/tele/money/content/text', 'r') as f:
+            text = f.read()
+        print(dbx.files_get_temporary_link('/doc').link)
+        send('<a href="' + dbx.files_get_temporary_link('/doc').link + '">&#8203;</a> %s' % text, key_send_admin(), id)
 
     if call.data == 'wefkbamklcsdfdsfhbffwca':
         with conn.cursor() as cur:
