@@ -94,10 +94,12 @@ def send(text, markup, id):
             msg = bot.send_message(id, text, reply_markup = markup)
             cur.execute('UPDATE users SET msg = %s', (msg.message_id,))
             conn.commit()
+            return msg.message_id
         else:
             msg = bot.send_message(id, text)
             cur.execute('UPDATE users SET msg = %s', (msg.message_id,))
             conn.commit()
+            return msg.message_id
 
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
@@ -226,11 +228,11 @@ def callback_inline(call):
             else:
                 cur.execute('UPDATE users SET time = %s WHERE id = %s', (now.strftime('%H.%M.%S'), id))
                 conn.commit()
-                send('Выполнено: 1 из 24', None,id)
+                msg = send('Выполнено: 1 из 24', None, id)
                 for i in range(25):
-                    send('Выполено: ' + str(i) + ' из 25\n', None, id)
-                send('Выполено: 25 из 25\nНачислено: 50 руб.', key_exit(), id)
-                cur.execute('UPDATE users SET balance = balance + 50 WHERE id = %s', (id,))
+                    msg = bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', char_id = id, message_id = msg.message_id)
+                msg = bot.edit_message_text(text = 'Выполено: 25 из 25\nНачислено: 50 руб.', reply_markup = key_exit(), chat_id = id, message_id = msg.message_id)
+                cur.execute('UPDATE users SET balance = balance + 50, msg = %s WHERE id = %s', (msg.mesage_id, id))
                 conn.commit()
 
 def partners(id, func):
