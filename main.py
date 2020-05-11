@@ -271,6 +271,8 @@ def callback_inline(call):
                 bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
                 #except:
                 #    print('Сообщение не найдено')
+            else:
+                print('123')
             cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
