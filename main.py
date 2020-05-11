@@ -109,9 +109,9 @@ def mailing_text(id, text):
         with open('/home/tele/money/content/text', 'w') as f:
             f.write(text)
         send('Отправльте картинку, видео или стик. Если этого не требуется, то отправьте \'!\'', key_exit_admin(), id)
-        with conn.cursor() as cur:
-            cur.execute('UPDATE admins SET mod = 2')
-            conn.commit()
+    with conn.cursor() as cur:
+        cur.execute('UPDATE admins SET mod = 2')
+        conn.commit()
 
 def send(text, markup, id):
     with conn.cursor() as cur:
@@ -132,22 +132,23 @@ def send(text, markup, id):
             conn.commit()
             return msg.message_id
 #--------------------------------------------------обработчики------------------------------------------------------------
-@bot.message_handler(content_types=['document'])
+@bot.message_handler(content_types=['photo'])
 def handle_docs_photo(message):
     with conn.cursor() as cur:
         cur.execute('SELECT mod FROM admins WHERE id = %s', (message.chat.id,))
         if bool(cur.rowcount):
             mod = cur.fetchone()[0]
             if mod == 2:
-                file_info = bot.get_file(message.document.file_id)
-                downloaded_file = bot.download_file(file_info.file_path)
-                src = '/home/tele/money/content/' + message.document.file_name;
-                with open(src, 'wb') as new_file:
-                    new_file.write(downloaded_file)
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                bot.send_message(id, '<a href="' + src + '">&#8203;</a>', parse_mode="HTML")
+                bot.send_photo(message.chat.id, message.photo.file_id)
+
+# file_info = bot.get_file(message.document.file_id)
+# downloaded_file = bot.download_file(file_info.file_path)
+# src = '/home/tele/money/content/' + message.document.file_name;
+# with open(src, 'wb') as new_file:
+#     new_file.write(downloaded_file)
 
 # bot.send_media_group(chatid,
 # [InputMediaPhoto(msg.message.photo.file_id),
@@ -238,6 +239,9 @@ def handler(message):
                 mod = cur.fetchone()[0]
                 if mod == 1:
                     mailing_text(id, message.text)
+                if mod == 2 and message.text == '!':
+                    with open('/home/tele/money/content/text', 'r') as f:
+                        send(f.read(), None, id)
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
