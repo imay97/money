@@ -184,7 +184,7 @@ def callback_inline(call):
 
     if call.data == 'statistic_qsxcdlewgfwefwfafmag':
         with conn.cursor() as cur:
-            cur.execute('SELECT name FROM admins WHERE id = %s', (id,))
+            cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
             if bool(cur.rowcount):
                 name = cur.fetchone()[0]
                 cur.execute('SELECT COUNT(id) FROM users')
@@ -197,7 +197,11 @@ def callback_inline(call):
 Активных(за неделю): ' + str(active) + '\nПриглашенных: ' + str(ref) + '\nРекламные ссылки: 0', key_exit_admin(), id)
 
     if call.data == 'ok_admin':
-        send('Здравствуйте, ' + name.replace('None', '') + '.\nВы вошли как администратор', key_admin(), id)
+        with conn.cursor() as cur:
+            cur.execute('SELECT name FROM admins WHERE id = %s', (id,))
+            if bool(cur.rowcount):
+                name = cur.fetchone()[0]
+                send('Здравствуйте, ' + name.replace('None', '') + '.\nВы вошли как администратор', key_admin(), id)
 
     if call.data == 'ok':
         send("Выберите способ заработка", key_main(), id)
