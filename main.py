@@ -126,12 +126,12 @@ def send(text, markup, id):
             except:
                 print('Can\'t delete message')
         if markup != None:
-            msg = bot.send_message(id, text, reply_markup = markup)
+            msg = bot.send_message(id, text, reply_markup = markup, parse_mode="HTML")
             cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
             conn.commit()
             return msg.message_id
         else:
-            msg = bot.send_message(id, text)
+            msg = bot.send_message(id, text, parse_mode="HTML")
             cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
             conn.commit()
             return msg.message_id
