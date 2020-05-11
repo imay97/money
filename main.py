@@ -4,6 +4,7 @@ import psycopg2
 from telebot import types
 import datetime
 import hashlib
+import dropbox
 
 API_TOKEN = '1129280265:AAGcX5WBLwReXZOEbMHvLQpD-BoYnMhSyn0'
 WEBHOOK_HOST = '138.68.22.231'
@@ -139,10 +140,19 @@ def handle_docs_photo(message):
         if bool(cur.rowcount):
             mod = cur.fetchone()[0]
             if mod == 2:
+                file_info = bot.get_file(message.document.file_id)
+                downloaded_file = bot.download_file(file_info.file_path)
+                src = '/home/tele/money/content/' + message.document.file_name;
+                with open(src, 'wb') as new_file:
+                    new_file.write(downloaded_file)
+                drb = dropbox.Dropbox('D_Y0OZ93PXAAAAAAAAAADWMa_VV5YOSGGj_6unSdwHs2oLRNroYRcXmO2-Az-vKT')
+                with open(src, 'rb') as f:
+                    dbx.files_upload(f.read(), message.document.file_name)
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                bot.send_message(message.chat.id, '<a href="https://sun9-30.userapi.com/c841238/v841238761/7df52/vx_r7KiWXfc.jpg">&#8203;</a> %s' % text, parse_mode="HTML")
+                print(dbx.files_get_temporary_link(message.document.file_name).link)
+                #bot.send_message(message.chat.id, '<a href="' + dbx.files_get_temporary_link(message.document.file_name).link + '">&#8203;</a> %s' % text, parse_mode="HTML")
 
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
