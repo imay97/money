@@ -87,6 +87,13 @@ def key_exit_admin():
     keyboard.add(*btns)
     return keyboard
 
+def key_send_admin():
+    keyboard = types.InlineKeyboardMarkup()
+    btns = []
+    btns.append(types.InlineKeyboardButton('Отправить', callback_data = "send_post"))
+    keyboard.add(*btns)
+    return keyboard
+
 def partners(id, func):
     with conn.cursor() as cur:
         cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
@@ -155,7 +162,7 @@ def handle_docs_photo(message):
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
                 print(dbx.files_get_temporary_link('/' + message.document.file_name).link)
-                send('<a href="' + dbx.files_get_temporary_link('/' + message.document.file_name).link + '">&#8203;</a> %s' % text, None, message.chat.id)
+                send('<a href="' + dbx.files_get_temporary_link('/' + message.document.file_name).link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
 # src = '/home/tele/money/content/' + message.document.file_name;
