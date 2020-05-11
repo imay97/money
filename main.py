@@ -197,7 +197,7 @@ def callback_inline(call):
         send('Здравствуйте.' + '.\nВы вошли как администратор', key_admin(), id)
 
     if call.data == 'ok':
-        send("Выберите способ заработка", key_menu(), id)
+        send("Выберите способ заработка", key_main(), id)
 
     if call.data == 'say':
         send('Приглашайте партнёров в бот и \
