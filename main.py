@@ -85,7 +85,7 @@ def key_exit_admin():
 
 def mailing(id):
     msg = send('Отправьте текст', None, id)
-    bot.register_next_step_handler(chat_id = id, text_mailing)
+    bot.register_next_step_handler(text_mailing, chat_id = id)
 
 def text_mailing(message):
     if message.text != '!':
