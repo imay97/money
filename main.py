@@ -142,7 +142,7 @@ def handle_docs_photo(message):
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                bot.send_photo(message.chat.id, message.photo[0].file_id)
+                bot.send_photo(message.chat.id, message.photo[0].file_id, caption = text)
 
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
