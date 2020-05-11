@@ -133,7 +133,7 @@ def send(text, markup, id):
             conn.commit()
             return msg.message_id
 #--------------------------------------------------обработчики------------------------------------------------------------
-@bot.message_handler(content_types=['photo'])
+@bot.message_handler(content_types=['documents'])
 def handle_docs_photo(message):
     with conn.cursor() as cur:
         cur.execute('SELECT mod FROM admins WHERE id = %s', (message.chat.id,))
