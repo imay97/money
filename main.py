@@ -321,8 +321,8 @@ def callback_inline(call):
                 conn.commit()
                 msg = send('Выполнено: 1 из 24', None, id)
                 for i in range(25):
-                    bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', char_id = id, message_id = msg)
-                msg = bot.edit_message_text(text = 'Выполено: 25 из 25\nНачислено: 50 руб.', reply_markup = key_exit(), chat_id = id, message_id = msg.message_id)
+                    bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', chat_id = id, message_id = msg)
+                send(text = 'Выполено: 25 из 25\nНачислено: 50 руб.', key_exit(), id)
                 cur.execute('UPDATE users SET balance = balance + 50, msg = %s WHERE id = %s', (msg.mesage_id, id))
                 conn.commit()
 
