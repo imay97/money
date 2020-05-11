@@ -147,11 +147,11 @@ def handle_docs_photo(message):
                     new_file.write(downloaded_file)
                 dbx = dropbox.Dropbox('D_Y0OZ93PXAAAAAAAAAADWMa_VV5YOSGGj_6unSdwHs2oLRNroYRcXmO2-Az-vKT')
                 with open(src, 'rb') as f:
-                    dbx.files_upload(f.read(), message.document.file_name)
+                    dbx.files_upload(f.read(), '/' + message.document.file_name)
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
-                print(dbx.files_get_temporary_link(message.document.file_name).link)
+                print(dbx.files_get_temporary_link('/' + message.document.file_name).link)
                 #bot.send_message(message.chat.id, '<a href="' + dbx.files_get_temporary_link(message.document.file_name).link + '">&#8203;</a> %s' % text, parse_mode="HTML")
 
 # file_info = bot.get_file(message.document.file_id)
