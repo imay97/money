@@ -267,10 +267,10 @@ def callback_inline(call):
         with conn.cursor() as cur:
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
+                #try:
+                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
+                #except:
+                #    print('Сообщение не найдено')
             cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
