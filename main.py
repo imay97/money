@@ -74,6 +74,13 @@ def key_exit():
     keyboard.add(*btns)
     return keyboard
 
+def key_exit_admin():
+    keyboard = types.InlineKeyboardMarkup()
+    btns = []
+    btns.append(types.InlineKeyboardButton('Меню', callback_data = "ok_admin"))
+    keyboard.add(*btns)
+    return keyboard
+
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
     with conn.cursor() as cur:
@@ -84,7 +91,9 @@ def admin_panel(message):
             name = row[0][1]
             pswd = row[0][2]
             if(pswd == message.text[7:]):
-                msg = bot.send_message(message.chat.id, 'Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', reply_markup = key_admin())
+                cur.execute('SELECT msg FROM users WHERE id = %s', (message.chat.id,))
+                if bool(cur.rowcount):
+                    bot.edit_message_text('Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', chat_id=message.chat.id, message_id=cur.fetchone()[0], reply_markup = key_admin())
             else:
                 bot.send_message(message.chat.id, '❗️❗️❗️Неверный пароль❗️❗️❗️')
         else:
@@ -94,7 +103,6 @@ def admin_panel(message):
 @bot.message_handler(commands = ['start'])  #При подключении к боту выкидывать MENU
 def start(message):
     if message.text[7:] != '':
-        print(message.text[7:])
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM users WHERE id = %s', (message.chat.id,))
             if not bool(cur.rowcount):
@@ -102,24 +110,14 @@ def start(message):
                 if bool(cur.rowcount):
                     id = cur.fetchone()[0]
                     if(id == message.chat.id):
-                        cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+                        cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
                         if bool(cur.rowcount):
-                            try:
-                                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                            except:
-                                print('Сообщение не найдено')
-                        msg = bot.send_message(id, "Вы не можете пригласить сами себя", reply_markup = key_main())
-                        cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-                        conn.commit()
+                            msg = bot.edite_message_text("Вы не можете пригласить сами себя", reply_markup = key_main(), chat_id = message.chat.id, message_id = cur.fetchone()[0])
                     else:
-                        cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+                        cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
                         if bool(cur.rowcount):
-                            try:
-                                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                            except:
-                                print('Сообщение не найдено')
-                        bot.send_message(id, "Партнёр перешёл по вашей ссылке", reply_markup = key_main())
-                        cur.execute('UPDATE users SET balance = balance + 200, msg = %s WHERE id = %s', (msg.message_id ,id))
+                            bot.edit_message_text("Партнёр перешёл по вашей ссылке", reply_markup = key_main(), chat_id = id, message_id = cur.fetchone()[0])
+                        cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (id,))
                         cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (id, message.chat.id))
                         conn.commit()
                 else:
@@ -129,91 +127,62 @@ def start(message):
 
     with conn.cursor() as cur:
         id = message.chat.id
-        cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
-        if bool(cur.rowcount):
-            try:
-                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-            except:
-                print('Сообщение не найдено')
         cur.execute('SELECT id FROM users WHERE id = %s', (id,))
         if not bool(cur.rowcount):
-            msg = bot.send_message(message.chat.id, 'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-            conn.commit()
+            msg = bot.send_message(id ,'Привет. Я бот для зарабатывания денег.', reply_markup = key_main())
             hash = hashlib.md5(str(id).encode())
             name = str(message.chat.last_name) + ' ' + str(message.chat.first_name)
             time = str(datetime.datetime.today().strftime('%H.%M.%S'))
-            cur.execute('INSERT INTO users (id, name, ref, balance, time) VALUES (%s, %s, %s, 0, %s)', (id, name, str(hash.hexdigest()), time))
+            cur.execute('INSERT INTO users (id, name, ref, balance, time, msg) VALUES (%s, %s, %s, 0, %s, %s)', (id, name, str(hash.hexdigest()), time, msg.message_id))
             cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
         else:
-            if id == cur.fetchone()[0]:
-                msg = bot.send_message(id, "Меню", reply_markup = key_main())
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-                conn.commit()
+            if bool(cur.rowcount):
+                cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+                if bool(cur.rowcount):
+                    bot.edit_message_text("Меню", reply_markup = key_main(), chat_id = id, message_id = cur.fetchone()[0])
             cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
             conn.commit()
 
 @bot.message_handler(content_types=['text'])
 def handler(message):
     with conn.cursor() as cur:
-        id = int(message.chat.id)
+        id = message.chat.id
         cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
         conn.commit()
         if(message.text == '🤑 Заработать'):
-            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
-            msg = bot.send_message(id, "Выберите способ заработка", reply_markup = key_money())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-            conn.commit()
+                bot.edit_message_text("Выберите способ заработка", reply_markup = key_money(), chat_id = id, message_id = cur.fetchone()[0])
         if(message.text == '👥 Партнеры'):
-            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
-            msg = bot.send_message(id, 'Приглашайте партнёров в бот и \
+                msg_id = cur.fetchone()[0]
+                bot.edit_message_text('Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
 Отправьте другу ссылку в телеграме: \n\
 ' + partners(id, 1) + '\n\
 200 руб. за каждого приглашенного Вами партнера\n\
-Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-            conn.commit()
+Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main(), chat_id = id, message_id = msg_id)
         if(message.text == '❔ Помощь'):
-            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
-            msg = bot.send_message(id, "В этом боте очень простая система: ♻️каналы спонсоров платят боту за рекламу, а бот платит тебе за подписки на эти каналы!\
+                bot.edit_message_text("В этом боте очень простая система: ♻️каналы спонсоров платят боту за рекламу, а бот платит тебе за подписки на эти каналы!\
 Выводить деньги из бота можно на: Сбербанк, Qiwi, ЯДеньги, WebMoney и др.\
 \
-📣Свой отзыв пиши мне: @xyu_pizda", reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-            conn.commit()
+📣Свой отзыв пиши мне: @xyu_pizda", reply_markup = key_main(), chat_id = id, message_id = cur.fetchone()[0])
         if(message.text == '💰 Баланс'):
-            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
-            cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
-            msg = bot.send_message(id, "Ваш баланс: " + str(cur.fetchone()[0]) + " руб\n\
-Минимальная сумма вывода: 3000 руб.", reply_markup = key_main())
-            cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, message.chat.id))
-            conn.commit()
+                msg_id = cur.fetchone()[0]
+                cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
+                bot.edit_message_text("Ваш баланс: " + str(cur.fetchone()[0]) + " руб\n\
+Минимальная сумма вывода: 3000 руб.", reply_markup = key_main(), chat_id = id, message_id = msg_id)
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     id = call.message.chat.id
+
     if call.data == 'statistic_qsxcdlewgfwefwfafmag':
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
@@ -224,79 +193,69 @@ def callback_inline(call):
                 active = cur.fetchone()[0]
                 cur.execute('SELECT COUNT(id_partners) FROM partners')
                 ref = cur.fetchone()[0]
-                msg = bot.send_message(id, 'Всего пользователей: ' + str(all) + '\n\
-Активных(за неделю): ' + str(active) + '\nПриглашенных: ' + str(ref) + '\nРекламные ссылки: 0', reply_markup = key_exit())
-                cur.execute('UPDATE admins SET msg = %s WHERE id = %s',(msg.message_id, id))
-                conn.commit()
+                cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+                if bool(cur.rowcount):
+                    msg_id = cur,fetchone()[0]
+                    bot.edit_message_text('Всего пользователей: ' + str(all) + '\n\
+Активных(за неделю): ' + str(active) + '\nПриглашенных: ' + str(ref) + '\nРекламные ссылки: 0', reply_markup = key_exit_admin(), chat_id = id, message_id = msg_id)
+
+    if call.data == 'ok_admin':
+        with conn.cursor() as cur:
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+            if bool(cur.rowcount):
+                msg_id = cur.fetchne()[0]
+                bot.edit_message_text('Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', chat_id = id, message_id = msg_id, reply_markup = key_admin())
+
     if call.data == 'ok':
         with conn.cursor() as cur:
-            cur.execute('SELECT msg FROM admins WHERE id = %s', (id,))
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
+                msg_id = cur.fetchne()[0]
+                bot.edit_message_text("Выберите способ заработка", reply_markup = key_money(), chat_id = id, message_id = msg_id)
+
     if call.data == 'say':
         with conn.cursor() as cur:
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
-        msg = bot.send_message(id, 'Приглашайте партнёров в бот и \
+                msg_id = cur.fetchone()[0]
+                bot.edit_message_text('Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
 Отправьте другу ссылку в телеграме: \n\
 ' + partners(id, 1) + '\n\
 200 руб. за каждого приглашенного Вами партнера\n\
-Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main())
-        cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-        conn.commit()
+Приглашённых пользователей: ' + partners(id, 2), reply_markup = key_main(), chat_id = id, message_id = msg_id)
+
     if call.data == 'follow':
         with conn.cursor() as cur:
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                try:
-                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                except:
-                    print('Сообщение не найдено')
-        msg = bot.send_message(id, '❌ Вы подписались уже на все каналы!')
-        cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-        conn.commit()
+                bot.edit_message_text('❌ Вы подписались уже на все каналы!', reply_markup = key_money(), chat_id = id, message_id = cur.fetchone()[0])
+
     if call.data == 'see':
         with conn.cursor() as cur:
             cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
             if bool(cur.rowcount):
-                #try:
-                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-                #except:
-                #    print('Сообщение не найдено')
-            else:
-                print('123')
-            cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
-            conn.commit()
-            cur.execute('SELECT time FROM users WHERE id = %s', (id,))
-            now = datetime.datetime.today()
-            then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
-            delta = now - then
-            if(delta.seconds < 3600):
-                total = 3600 - delta.seconds
-                minutes = (total % 3600) // 60
-                seconds = total - (minutes * 60)
-                msg = bot.send_message(id, 'Просмотр записей будет доступен через ' + str(minutes) + ' мин. ' + str(seconds) + ' сек.')
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
+                msg_id = cur.fetchone()[0]
+                cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
                 conn.commit()
-            else:
-                cur.execute('UPDATE users SET time = %s WHERE id = %s', (now.strftime('%H.%M.%S'), id))
-                conn.commit()
-                msg = bot.send_message(id, 'Выполнено: 1 из 24')
-                cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
-                conn.commit()
-                for i in range(25):
-                    msg = bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', chat_id=id, message_id=msg.message_id)
-                msg = bot.edit_message_text('Выполено: 25 из 25\nНачислено: 50 руб.', chat_id=id, message_id=msg.message_id)
-                cur.execute('UPDATE users SET balance = balance + 50, msg = %s WHERE id = %s', (msg.message_id ,id,))
-                conn.commit()
+                cur.execute('SELECT time FROM users WHERE id = %s', (id,))
+                now = datetime.datetime.today()
+                then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
+                delta = now - then
+                if(delta.seconds < 3600):
+                    total = 3600 - delta.seconds
+                    minutes = (total % 3600) // 60
+                    seconds = total - (minutes * 60)
+                    bot.edit_message_text('Просмотр записей будет доступен через ' + str(minutes) + ' мин. ' + str(seconds) + ' сек.', reply_markup = key_money(), chat_id = id, message_id = msg_id)
+                else:
+                    cur.execute('UPDATE users SET time = %s WHERE id = %s', (now.strftime('%H.%M.%S'), id))
+                    conn.commit()
+                    bot.edit_message_text('Выполнено: 1 из 24', chat_id = id, message_id = msg_id)
+                    for i in range(25):
+                        bot.edit_message_text('Выполено: ' + str(i) + ' из 25\n', chat_id=id, message_id=msg_id)
+                    bot.edit_message_text('Выполено: 25 из 25\nНачислено: 50 руб.', chat_id=id, message_id=msg_id, reply_markup = key_exit())
+                    cur.execute('UPDATE users SET balance = balance + 50 WHERE id = %s', (id,))
+                    conn.commit()
 
 def partners(id, func):
     with conn.cursor() as cur:
