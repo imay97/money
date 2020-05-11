@@ -50,6 +50,7 @@ def key_money():
     btns.append(types.InlineKeyboardButton('🗣 Пригласить друга, 200руб', callback_data = "say"))
     btns.append(types.InlineKeyboardButton('📌 Подписаться на канал, 100руб', callback_data = "follow"))
     btns.append(types.InlineKeyboardButton('👀 Посмотреть записи, 50руб', callback_data = "see"))
+    btns.append(types.InlineKeyboardButton('📱 Меню', callback_data = "ok"))
     keyboard.add(*btns)
     return keyboard
 
@@ -196,7 +197,7 @@ def callback_inline(call):
         send('Здравствуйте.' + '.\nВы вошли как администратор', key_admin(), id)
 
     if call.data == 'ok':
-        send("Выберите способ заработка", key_money(), id)
+        send("Выберите способ заработка", key_menu(), id)
 
     if call.data == 'say':
         send('Приглашайте партнёров в бот и \
