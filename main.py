@@ -91,7 +91,7 @@ def text_mailing(message):
     if message.text != '!':
         text = message.text
     msg = send('Отправьте картинку, видео, или стик', None, message.chat.id)
-    bot.register_next_step_handler(chat_id = id, conent_mailing)
+    bot.register_next_step_handler(msg.message_id, conent_mailing)
 
 def content_mailing(message):
     send(message, None, message.chat.id)
