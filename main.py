@@ -229,12 +229,13 @@ def callback_inline(call):
                 except:
                     print('Сообщение не найдено')
     if call.data == 'say':
-        cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
-        if bool(cur.rowcount):
-            try:
-                bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
-            except:
-                print('Сообщение не найдено')
+        with conn.cursor() as cur:
+            cur.execute('SELECT msg FROM users WHERE id = %s', (id,))
+            if bool(cur.rowcount):
+                try:
+                    bot.delete_message(message_id = cur.fetchone()[0], chat_id = id)
+                except:
+                    print('Сообщение не найдено')
         bot.send_message(id, 'Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
 Отправьте другу ссылку в телеграме: \n\
