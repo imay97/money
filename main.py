@@ -5,11 +5,9 @@ from telebot import types
 import datetime
 import hashlib
 import dropbox
+import dbx
+import tlg
 
-API_TOKEN = ''
-with open('/home/tele/money/tlg', 'r') as f:
-    API_TOKEN = f.read()
-print(API_TOKEN)
 WEBHOOK_HOST = '138.68.22.231'
 WEBHOOK_PORT = 80 #8443 80 88 443
 WEBHOOK_LISTEN = '0.0.0.0'
@@ -148,9 +146,6 @@ def handle_docs_photo(message):
                 src = '/home/tele/money/content/' + message.document.file_name;
                 with open(src, 'wb') as new_file:
                     new_file.write(downloaded_file)
-                dbx_token = ''
-                with open('/home/tele/money/dbx', 'r') as f:
-                    dbx_token = f.read()
                 dbx = dropbox.Dropbox(dbx_token)
                 with open(src, 'rb') as f:
                     dbx.files_upload(f.read(), '/' + message.document.file_name)
