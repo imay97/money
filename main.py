@@ -196,7 +196,7 @@ def handler(message):
 def callback_inline(call):
     id = call.message.chat.id
 
-    if call.data = 'wefkbamklcsdfdsfhbffwca':
+    if call.data == 'wefkbamklcsdfdsfhbffwca':
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
             if bool(cur.rowcount):
