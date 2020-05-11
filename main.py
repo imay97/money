@@ -6,7 +6,7 @@ import datetime
 import hashlib
 import dropbox
 import sys
-sys.path.append("../")
+sys.path.append("/home/tele/money/")
 from dbx import *
 from tlg import *
 
