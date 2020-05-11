@@ -151,8 +151,6 @@ def handler(message):
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     id = call.message.chat.id
-    cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
-    conn.commit()
     if call.data == 'statistic_qsxcdlewgfwefwfafmag':
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
@@ -176,6 +174,8 @@ def callback_inline(call):
         bot.send_message(id, '❌ Вы подписались уже на все каналы!')
     if call.data == 'see':
         with conn.cursor() as cur:
+            cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+            conn.commit()
             cur.execute('SELECT time FROM users WHERE id = %s', (id,))
             now = datetime.datetime.today()
             then = datetime.datetime.strptime(str(cur.fetchone()[0]), '%H.%M.%S')
@@ -197,6 +197,8 @@ def callback_inline(call):
 
 def partners(id, func):
     with conn.cursor() as cur:
+        cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+        conn.commit()
         try:
             if(func == 1):
                 cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
