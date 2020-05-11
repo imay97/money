@@ -157,7 +157,7 @@ def callback_inline(call):
             if bool(cur.fetchone()[0]):
                 cur.execute('SELECT COUNT(id) FROM users')
                 all = cur.fetchone()[0]
-                cur.execute('SELECT COUNT(id) FROM users WHERE active - %s <= 7')
+                cur.execute('SELECT COUNT(id) FROM users WHERE active - %s <= 7', (datetime.datetime.today().strftime('%Y-%m-%d'),))
                 active = cur.fetchone()[0]
                 cur.execute('SELECT COUNT(id_partners) FROM partners')
                 ref = cur.fetchone()[0]
