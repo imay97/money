@@ -112,7 +112,7 @@ def admin_panel(message):
             if(pswd == message.text[7:]):
                 send('Здравствуйте, ' + str(name).replace('None', '') + '.\nВы вошли как администратор', key_admin(), message.chat.id)
             else:
-                send('❗️❗️❗️Неверный пароль❗️❗️❗️', key_menu(), message.chat.id)
+                send('❗️❗️❗️Неверный пароль❗️❗️❗️', key_main(), message.chat.id)
         else:
             send('❗️❗️❗️У Вас не доступа к этому разделу. О попытке получения привелигированного доступа с вашего аккаунта, будет сообщено администратору', key_menu(), message.chat.id)
 
