@@ -83,18 +83,35 @@ def key_exit_admin():
     keyboard.add(*btns)
     return keyboard
 
+def partners(id, func):
+    with conn.cursor() as cur:
+        cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
+        conn.commit()
+        try:
+            if(func == 1):
+                cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
+                return 'https://t.me/imaycash_bot?start=' + cur.fetchone()[0]
+            if(func == 2):
+                cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
+                n = cur.fetchone()[0]
+                return str(n) + '\nЗаработок: ' + str(200 * int(n))
+        except:
+            return 'None'
+
 def mailing(id):
-    msg = send('Отправьте текст', None, id)
-    bot.register_next_step_handler(id, text_mailing)
+    send('Отправльте текст. Если текст не нужен, то отправьте \'!\'', key_exit_admin(), id)
+    with conn.cursor() as cur:
+        cur.execute('UPDATE admins SET mod = 1')
+        conn.commit()
 
-def text_mailing(message):
-    if message.text != '!':
-        text = message.text
-    msg = send('Отправьте картинку, видео, или стик', None, message.chat.id)
-    bot.register_next_step_handler(message.chat.id, conent_mailing)
-
-def content_mailing(message):
-    send(message, None, message.chat.id)
+def mailing_text(id, text):
+    if text != '!':
+        with open('/home/tele/money/content/text', 'w') as f:
+            f.write(text)
+        send('Отправльте картинку, видео или стик. Если этого не требуется, то отправьте \'!\'', key_exit_admin(), id)
+        with conn.cursor() as cur:
+            cur.execute('UPDATE admins SET mod = 2')
+            conn.commit()
 
 def send(text, markup, id):
     with conn.cursor() as cur:
@@ -114,6 +131,30 @@ def send(text, markup, id):
             cur.execute('UPDATE users SET msg = %s WHERE id = %s', (msg.message_id, id))
             conn.commit()
             return msg.message_id
+#--------------------------------------------------обработчики------------------------------------------------------------
+@bot.message_handler(content_types=['document'])
+def handle_docs_photo(message):
+    with conn.cursor() as cur:
+        cur.execute('SELECT mod FROM admins WHERE id = %s', (message.chat.id),)
+        if bool(cur.rowcount):
+            mod = cur.fetchone()[0]
+            if mod == 2:
+                file_info = bot.get_file(message.document.file_id)
+                downloaded_file = bot.download_file(file_info.file_path)
+                src = '/home/tele/money/content/' + message.document.file_name;
+                with open(src, 'wb') as new_file:
+                    new_file.write(downloaded_file)
+                text = ''
+                with open('/home/tele/money/content/text', 'r') as f:
+                    text = f.read()
+                bot.send_message(id, '<a href="' + src + '">&#8203;</a>', parse_mode="HTML")
+
+# bot.send_media_group(chatid,
+# [InputMediaPhoto(msg.message.photo.file_id),
+# InputMediaVideo(msg.message.video.file_id)])
+
+# bot.send_message(id, '<a href="IMG_URL">&#8203;</a>',
+#                  parse_mode="HTML")
 
 @bot.message_handler(commands = ['admin'])
 def admin_panel(message):
@@ -191,6 +232,12 @@ def handler(message):
             cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
             send("Ваш баланс: " + str(cur.fetchone()[0]) + " руб\n\
 Минимальная сумма вывода: 3000 руб.", key_main(), id)
+        else:
+            cur.execute('SELECT mod FROM admins WHERE id = %s', (id,))
+            if bool(cur.rowcount):
+                mod = cur.fetchone()[0]
+                if mod == 1:
+                    mailing_text(id, message.text)
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
@@ -222,6 +269,8 @@ def callback_inline(call):
             if bool(cur.rowcount):
                 name = cur.fetchone()[0]
                 send('Здравствуйте, ' + name.replace('None', '') + '.\nВы вошли как администратор', key_admin(), id)
+                cur.execute('UPDATE admins SET mod = 0')
+                conn.commit()
 
     if call.data == 'ok':
         send("Меню", key_main(), id)
@@ -259,21 +308,6 @@ def callback_inline(call):
                 msg = bot.edit_message_text(text = 'Выполено: 25 из 25\nНачислено: 50 руб.', reply_markup = key_exit(), chat_id = id, message_id = msg.message_id)
                 cur.execute('UPDATE users SET balance = balance + 50, msg = %s WHERE id = %s', (msg.mesage_id, id))
                 conn.commit()
-
-def partners(id, func):
-    with conn.cursor() as cur:
-        cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
-        conn.commit()
-        try:
-            if(func == 1):
-                cur.execute('SELECT ref FROM users WHERE id = %s', (id,))
-                return 'https://t.me/imaycash_bot?start=' + cur.fetchone()[0]
-            if(func == 2):
-                cur.execute('SELECT COUNT(id_partners) FROM partners WHERE id_me = %s', (id,))
-                n = cur.fetchone()[0]
-                return str(n) + '\nЗаработок: ' + str(200 * int(n))
-        except:
-            return 'None'
 
 #end
 bot.remove_webhook()
