@@ -95,6 +95,13 @@ def key_send_admin():
     keyboard.add(*btns)
     return keyboard
 
+def key_send_video_admin():
+    keyboard = types.InlineKeyboardMarkup()
+    btns = []
+    btns.append(types.InlineKeyboardButton('Отправить', callback_data = "send_video_post"))
+    keyboard.add(*btns)
+    return keyboard
+
 def partners(id, func):
     with conn.cursor() as cur:
         cur.execute('UPDATE users SET active = %s WHERE id = %s', (datetime.datetime.today().strftime('%Y-%m-%d'), id))
@@ -151,20 +158,40 @@ def handle_docs_photo(message):
         if bool(cur.rowcount):
             mod = cur.fetchone()[0]
             if mod == 2:
+                print('Файл принят в обработку')
                 file_info = bot.get_file(message.document.file_id)
                 downloaded_file = bot.download_file(file_info.file_path)
-                src = '/home/tele/money/content/' + message.document.file_id;
+                src = '/home/tele/money/content/' + message.document.file_name;
                 with open(src, 'wb') as new_file:
                     new_file.write(downloaded_file)
                 with open(src, 'rb') as f:
-                    dbx.files_upload(f.read(), '/' + message.document.file_id)
+                    print(message.document.file_name)
+                    dbx.files_upload(f.read(), '/' + message.document.file_name)
                 with open('/home/tele/money/content/file', 'w') as f:
-                    f.write(message.document.file_id)
+                    f.write(message.document.file_name)
                 text = ''
                 with open('/home/tele/money/content/text', 'r') as f:
                     text = f.read()
                 print(dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link)
                 send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % text, key_send_admin(), message.chat.id)
+
+@bot.message_handler(content_types=['video'])
+def handle_docs_photo(message):
+    with conn.cursor() as cur:
+        cur.execute('SELECT mod FROM admins WHERE id = %s', (message.chat.id,))
+        if bool(cur.rowcount):
+            mod = cur.fetchone()[0]
+            if mod == 2:
+                print('Видео принято в обработку')
+                file_info = bot.get_file(message.video.file_id)
+                downloaded_file = bot.download_file(file_info.file_path)
+                src = '/home/tele/money/content/video.mp4';# + message.video.file_id;
+                with open(src, 'wb') as new_file:
+                    new_file.write(downloaded_file)
+                with open(src, 'rb') as f:
+                    dbx.files_upload(f.read(), '/video.mp4')
+                print(dbx.files_get_temporary_link('/video.mp4').link)
+                send('<a href="' + dbx.files_get_temporary_link('/video.mp4').link + '">&#8203;</a> %s' % open('/home/tele/money/content/text', 'r').read(), key_send_video_admin(), message.chat.id)
 # file_info = bot.get_file(message.document.file_id)
 # downloaded_file = bot.download_file(file_info.file_path)
 # src = '/home/tele/money/content/' + message.document.file_name;
@@ -201,14 +228,14 @@ def start(message):
             if not bool(cur.rowcount):
                 cur.execute('SELECT id FROM users WHERE ref = %s', (message.text[7:],))
                 if bool(cur.rowcount):
-                    id = cur.fetchone()[0]
-                    if(id == message.chat.id):
-                        send("Вы не можете пригласить сами себя", key_main(), message.chat.id)
-                    else:
-                        send("Партнёр перешёл по вашей ссылке", key_main(), id)
-                        cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (id,))
-                        cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (id, message.chat.id))
-                        conn.commit()
+                    id_me = cur.fetchone()[0]
+                    cur.execute('UPDATE users SET balance = balance + 200 WHERE id = %s', (id_me,))
+                    cur.execute('INSERT INTO partners (id_me, id_partners) VALUES (%s, %s)', (id_me, message.chat.id))
+                    conn.commit()
+                    cur.execute('SELECT balance FROM users WHERE id = %s', (id_me,))
+                    send("✅ Партнёр перешёл по вашей ссылке\n\n\
+<b>Ваш баланс пополнен на 200 руб.</b>\n\n\
+Баланс: <b> %s руб.</b>" % (cur.fetchone()[0]), key_main(), id_me)
                 else:
                     print('Реф ссылка не найдена')
             else:
@@ -247,13 +274,12 @@ def handler(message):
 Приглашённых пользователей: ' + partners(id, 2), key_main(), id)
         if(message.text == '❔ Помощь'):
             send("В этом боте очень простая система: ♻️каналы спонсоров платят боту за рекламу, а бот платит тебе за подписки на эти каналы!\
-Выводить деньги из бота можно на: Сбербанк, Qiwi, ЯДеньги, WebMoney и др.\
-\
+Выводить деньги из бота можно на: Сбербанк, Qiwi, ЯДеньги, WebMoney и др.\n\
 📣Свой отзыв пиши мне: @xyu_pizda", key_main(), id)
         if(message.text == '💰 Баланс'):
             cur.execute('SELECT balance FROM users WHERE id = %s', (id,))
-            send("Ваш баланс: " + str(cur.fetchone()[0]) + " руб\n\
-Минимальная сумма вывода: 3000 руб.", key_main(), id)
+            send("Ваш баланс: <i>" + str(cur.fetchone()[0]) + " руб</i>\n\
+<i>Минимальная сумма вывода: 3000 руб.</i>", key_main(), id)
         else:
             cur.execute('SELECT mod FROM admins WHERE id = %s', (id,))
             if bool(cur.rowcount):
@@ -262,19 +288,31 @@ def handler(message):
                     mailing_text(id, message.text)
                 if mod == 2 and message.text == '!':
                     with open('/home/tele/money/content/text', 'r') as f:
-                        send(f.read(), None, id)
+                        send(f.read(), key, id)
 
 @bot.callback_query_handler(func = lambda call: True) #Приём CALL_BACK_DATA с кнопок
 def callback_inline(call):
     id = call.message.chat.id
 
-    if call.data == 'send_post':
-        text = ''
-        with open('/home/tele/money/content/text', 'r') as f:
-            text = f.read()
-        print(dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link)
-        send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % open('/home/tele/money/content/text', 'r').read(), key_send_admin(), id)
+    if call.data == 'send_video_post':
+        with conn.cursor() as cur:
+            cur.execute('SELECT id FROM users')
+            for r in cur.fetchall():
+                print(r[0])
+                try:
+                    send('<a href="' + dbx.files_get_temporary_link('/video.mp4').link + '">&#8203;</a> %s' % open('/home/tele/money/content/text', 'r').read(), None, r[0])
+                except:
+                    print('Не удалось отправить сообщение')
 
+    if call.data == 'send_post':
+        with conn.cursor() as cur:
+            cur.execute('SELECT id FROM users')
+            for r in cur.fetchall():
+                print(r[0])
+                try:
+                    send('<a href="' + dbx.files_get_temporary_link('/' + open('/home/tele/money/content/file', 'r').read()).link + '">&#8203;</a> %s' % open('/home/tele/money/content/text', 'r').read(), None, r[0])
+                except:
+                    send(open('/home/tele/money/content/text', 'r').read(), None, r[0])
     if call.data == 'wefkbamklcsdfdsfhbffwca':
         with conn.cursor() as cur:
             cur.execute('SELECT id FROM admins WHERE id = %s', (id,))
@@ -310,8 +348,8 @@ def callback_inline(call):
     if call.data == 'say':
         send('Приглашайте партнёров в бот и \
 получайте за них деньги!\n\
-Отправьте другу ссылку в телеграме: \n\
-' + partners(id, 1) + '\n\
+Отправьте другу ссылку в телеграме: \n\n\
+' + partners(id, 1) + '\n\n\
 200 руб. за каждого приглашенного Вами партнера\n\
 Приглашённых пользователей: ' + partners(id, 2), key_main(), id)
 
@@ -337,8 +375,8 @@ def callback_inline(call):
                 msg = send('Выполнено: 1 из 24', None, id)
                 for i in range(25):
                     bot.edit_message_text(text = 'Выполено: ' + str(i) + ' из 25\n', chat_id = id, message_id = msg)
-                send('Выполено: 25 из 25\nНачислено: 50 руб.', key_exit(), id)
-                cur.execute('UPDATE users SET balance = balance + 50, msg = %s WHERE id = %s', (msg.mesage_id, id))
+                send('Выполено: 25 из 25\n<b>Начислено: 50 руб.</b>', key_exit(), id)
+                cur.execute('UPDATE users SET balance = balance + 50 WHERE id = %s', (id,))
                 conn.commit()
 
 #end
